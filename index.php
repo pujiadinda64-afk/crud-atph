@@ -61,8 +61,8 @@ $role = $is_logged_in ? $_SESSION['role'] : 'guest';
           <span class="avatar-icon">🏫</span>
         </div>
         <div class="proof-text">
-          <strong>SMKN 1 ATPH</strong>
-          <span>100% Digital System</span>
+          <strong>SMKN 1 Maja</strong>
+          <span>AGRIBISNIS TANAMAN PANGAN & HOLTIKURA</span>
         </div>
       </div>
     </div>
@@ -228,6 +228,7 @@ $role = $is_logged_in ? $_SESSION['role'] : 'guest';
             </div>
           </div>
         </div>
+      </section>
 
         <!-- Card 4 -->
         <div class="card-item">
@@ -249,46 +250,71 @@ $role = $is_logged_in ? $_SESSION['role'] : 'guest';
 
       </div>
     </div>
-  </section>
 
-  <!-- SECTION KONTAK -->
-  <section id="kontak">
-    <div class="container">
-      <div class="contact-box">
-        <div class="contact-grid">
-          <div class="contact-info">
-            <h2>🛠️ Mari Terhubung Bersama Kami</h2>
-            <p class="contact-sub">Punya pertanyaan seputar jurusan ATPH, kerjasama, atau program praktik? Jangan ragu untuk menghubungi kami.</p>
+<!-- SECTION KONTAK -->
+<section id="kontak">
+  <div class="contact-box">
+    <div class="contact-grid">
+      
+      <!-- Kolom Kiri: Informasi Kontak -->
+      <div class="contact-info">
+        <h2>🛠️ Mari Terhubung Bersama Kami</h2>
+        <p class="contact-desc">
+          Punya pertanyaan seputar jurusan ATPH, kerjasama, atau program praktik? Jangan ragu untuk menghubungi kami.
+        </p>
 
-            <div class="contact-item">
-              <strong>EMAIL</strong>
-              <span>atph@smkn1.sch.id</span>
-            </div>
-            
-            <div class="contact-item">
-              <strong>TELEPON / WA</strong>
-              <span>+62 812-3456-7890</span>
-            </div>
-
-            <div class="contact-item">
-              <strong>LOKASI</strong>
-              <span>Area Green House SMKN 1</span>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-icon">✉️</div>
+            <div>
+              <span class="info-label">EMAIL</span>
+              <p>atph@smkn1.sch.id</p>
             </div>
           </div>
 
-          <div class="contact-form-wrapper">
-            <form action="proses_kontak.php" method="POST" class="contact-form">
-              <input type="text" name="nama" placeholder="Nama Anda" required>
-              <input type="email" name="email" placeholder="Email Anda" required>
-              <input type="text" name="subjek" placeholder="Subjek / Perihal">
-              <textarea name="pesan" rows="4" placeholder="Pesan Anda..." required></textarea>
-              <button type="submit" class="btn-submit-contact">Kirim Pesan</button>
-            </form>
+          <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div>
+              <span class="info-label">TELEPON / WA</span>
+              <p>+62 812-3456-7890</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div>
+              <span class="info-label">LOKASI</span>
+              <p>Area Green House SMKN 1</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">🕒</div>
+            <div>
+              <span class="info-label">JAM OPERASIONAL</span>
+              <p>• Senin - Jumat (07.00 - 15.30)</p>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Kolom Kanan: Form Pesan -->
+      <div class="contact-form-wrapper">
+        <form action="proses_kontak.php" method="POST" class="contact-form">
+          <div class="form-row">
+            <input type="text" name="nama" placeholder="Nama Anda" required>
+            <input type="email" name="email" placeholder="Email Anda" required>
+          </div>
+          <input type="text" name="subjek" placeholder="Subjek / Perihal">
+          <textarea name="pesan" rows="4" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
+          <button type="submit" class="btn-submit-contact">Kirim Pesan ↗</button>
+        </form>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
+
 <script>
   // Efek elemen muncul berurutan saat halaman di-scroll
   const observer = new IntersectionObserver((entries) => {
