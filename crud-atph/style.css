@@ -349,51 +349,35 @@ body {
 /* Kartu Bawah yang Ditarik Ke Atas */
 .about-grid {
   max-width: 1200px;
-  margin: -50px auto 60px auto; /* Margin minus untuk narik kartu naik */
+  width: 100%;
+  margin: -50px auto 60px auto;
   display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
+  /* Menggunakan ukuran yang seimbang agar pas 3 kolom */
+  grid-template-columns: repeat(3, 1fr); 
   gap: 20px;
   position: relative;
-  z-index: 10; /* Kartu berada di depan hero section */
+  z-index: 10;
   padding: 0 20px;
-}
-
-/* Wadah QR Code */
-.qr-box {
-  background: #ffffff;
-  width: 90px;
-  height: 90px;
-  border-radius: 16px;
-  margin: 12px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-}
-
-/* Gambar QR Code di dalam wadah */
-.qr-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 8px;
+  box-sizing: border-box;
 }
 /* Styling Setiap Kotak/Glass-Box */
 .glass-box {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  padding: 22px 24px;
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px;
   border-radius: 22px;
   border: 1px solid rgba(230, 240, 235, 0.8);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06); /* Shadow lembut ala Pinterest */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Kartu Barcode Khusus (Sebelah Kanan Bawah Foto) */
 .glass-box.box-center {
   background: #ffffff;
+  text-align: center;
   border: 1px solid #e2e8f0;
   box-shadow: 0 18px 40px rgba(27, 94, 59, 0.12); /* Highlight shadow khusus barcode */
 }
@@ -405,14 +389,135 @@ body {
   border-color: #a7f3d0;
 }
 
+/* Gallery Mini & Penambahan untuk Foto */
+.gallery-mini {
+  display: flex;
+  gap: 12px;
+  margin: 15px 0;
+}
 
-/* Animasi Mengapung Halus */
-@keyframes mengapung {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-  100% { transform: translateY(0px); }
+.gallery-item {
+  background: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  overflow: hidden; /* Menjaga agar foto tidak keluar kotak */
+}
+
+/* TAMBAHAN BARU: Agar foto (tag img) di dalam galeri pas ukurannya */
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Wadah QR Code */
+
+.qr-box {
+
+  background: #ffffff;
+
+  width: 90px;
+
+  height: 90px;
+
+  border-radius: 16px;
+
+  margin: 12px auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 8px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  border: 1px solid #e2e8f0;
 
 }
+
+
+
+/* Gambar QR Code di dalam wadah */
+
+.qr-img {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: contain;
+
+  border-radius: 8px;
+
+}
+
+/* Styling Setiap Kotak/Glass-Box */
+
+.glass-box {
+
+  background: rgba(255, 255, 255, 0.95);
+
+  backdrop-filter: blur(10px);
+
+  padding: 22px 24px;
+
+  border-radius: 22px;
+
+  border: 1px solid rgba(230, 240, 235, 0.8);
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06); /* Shadow lembut ala Pinterest */
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+
+
+/* Kartu Barcode Khusus (Sebelah Kanan Bawah Foto) */
+
+.glass-box.box-center {
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow: 0 18px 40px rgba(27, 94, 59, 0.12); /* Highlight shadow khusus barcode */
+
+}
+
+/* Gambar QR Code di dalam wadah */
+.qr-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.qr-icon {
+  font-size: 40px;
+}
+
+.ig-handle {
+  display: block;
+  font-weight: 800;
+  color: #1b5e3b;
+}
+
+.qr-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
 .quote {
   font-style: italic;
   color: #64748b;
@@ -442,101 +547,125 @@ body {
 }
 
 .tags-group {
+
   display: flex;
+
   gap: 12px;
+
   margin: 25px 0;
+
 }
+
+
 
 .tag-pill {
+
   background: #e8f5e9;
+
   color: #1b5e3b;
+
   font-size: 12px;
+
   font-weight: 800;
+
   padding: 8px 18px;
+
   border-radius: 20px;
-}
 
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 24px;
-}
-
-.glass-box {
-  background: #f8fafc;
-  padding: 24px;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  transition: 0.3s;
-}
-
-.glass-box:hover {
-  transform: translateY(-5px);
-  border-color: #74c69d;
-}
-
-.gallery-mini {
-  display: flex;
-  gap: 12px;
-  margin: 15px 0;
-}
-
-.gallery-item {
-  background: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
 }
 
 .stats-group {
+
   display: flex;
+
   gap: 40px;
+
   margin-top: 20px;
+
 }
+
+
 
 .stats-group strong {
+
   font-size: 28px;
+
   color: #1b5e3b;
+
   display: block;
+
   font-weight: 800;
+
 }
+
+
 
 .box-center {
+
   text-align: center;
+
 }
+
+
 
 .qr-box {
+
   background: white;
+
   width: 80px;
+
   height: 80px;
+
   border-radius: 18px;
+
   margin: 15px auto;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
 }
+
+
 
 .qr-icon {
+
   font-size: 40px;
+
 }
+
+
 
 .ig-handle {
+
   display: block;
+
   font-weight: 800;
+
   color: #1b5e3b;
+
 }
+
+
 
 .qr-sub {
+
   font-size: 12px;
+
   color: #94a3b8;
+
 }
 
+/* Animasi Mengapung Halus */
+@keyframes mengapung {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
 /* --- 3. MENU DATA (INTERACTIVE CARDS) --- */
 #menu-data {
   max-width: 1200px;

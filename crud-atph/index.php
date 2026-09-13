@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include 'koneksi.php';
+include '../koneksi.php';
 
 $is_logged_in = isset($_SESSION['user_id']);
 $role = $is_logged_in ? $_SESSION['role'] : 'guest';
@@ -118,19 +118,24 @@ $role = $is_logged_in ? $_SESSION['role'] : 'guest';
     </div>
   </section>
 
-<!-- KARTU BAWAH YANG MENUMPUK KE ATAS -->
 <div class="about-grid">
   <!-- Card 1: Galeri -->
   <div class="glass-box">
     <p class="box-title"><strong>Galeri Praktikum:</strong></p>
     <div class="gallery-mini">
-      <div class="gallery-item">🥬</div>
-      <div class="gallery-item">🍓</div>
-      <div class="gallery-item">🌱</div>
+      <div class="gallery-item">
+        <img src="jibril1.jpeg" alt="Praktikum 1">
+      </div>
+      <div class="gallery-item">
+        <img src="jibril1.jpeg" alt="Praktikum 2">
+      </div>
+      <div class="gallery-item">
+        <img src="jibril1.jpeg" alt="Praktikum 3">
+      </div>
     </div>
     <p class="box-desc">Menggabungkan ilmu sains budidaya dengan praktik kerja lapangan secara langsung.</p>
   </div>
-
+</div>
   <!-- Card 2: Deskripsi Ringkas -->
   <div class="glass-box box-between">
     <p class="box-desc-large">
