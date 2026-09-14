@@ -1,4 +1,4 @@
-<?php include '../koneksi.php'; $query = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC"); ?>
+<?php include '../../koneksi.php'; $query = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC"); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

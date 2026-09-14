@@ -1,5 +1,5 @@
 <?php 
-include '../koneksi.php';
+include '../../koneksi.php';
 if(isset($_POST['simpan'])){
   $nip = $_POST['nip']; $nama = $_POST['nama']; $mapel = $_POST['mapel_utama']; $wali = $_POST['wali_kelas'];
   $foto_baru = '';
@@ -8,7 +8,7 @@ if(isset($_POST['simpan'])){
     move_uploaded_file($_FILES['foto']['tmp_name'], "uploads/" . $foto_baru);
   }
   // FIX: ? nya 5
-  $stmt = $koneksi->prepare("INSERT INTO guru (Nip, Nama, Mapel_Utama, Wali_Kelas, Foto) VALUES (?, ?, ?)");
+  $stmt = $koneksi->prepare("INSERT INTO guru (Nip, Nama, Mapel_Utama, Wali_Kelas, Foto) VALUES (?, ?, ?, ?, ?)");
   $stmt->bind_param("sssss", $nip, $nama, $mapel, $wali, $foto_baru);
   if($stmt->execute()){ echo "<script>alert('Berhasil');window.location='index.php';</script>"; }
 }
