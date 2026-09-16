@@ -14,21 +14,21 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
     * { box-sizing: border-box; }
     
     /* Background Utama Full Layar Tema ATPH (Gradasi Hijau Segar) */
-    body { 
+ body { 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        background: linear-gradient(135deg, #1b4332 0%, #2e7d32 50%, #a7f3d0 100%);
-        background-attachment: fixed;
+        background: url('../sawah.jpg') no-repeat center center fixed;
+        background-size: cover;
         color: #334155; 
         margin: 0; 
         padding: 30px 20px; 
-        min-height: 100vh;
+        min-height: 100vh; 
     }
 
     /* Container Card Utama Efek Kaca (Glassmorphism Transparan) */
     .container { 
         max-width: 1150px; 
         margin: 0 auto; 
-        background: rgba(255, 255, 255, 0.85); 
+        background: rgba(255, 255, 255, 0.50); 
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         padding: 30px; 
