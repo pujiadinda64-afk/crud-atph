@@ -17,10 +17,10 @@ body {
   background: linear-gradient(rgba(8, 30, 15, 0.85), rgba(15, 56, 32, 0.88)), 
               url('gunung.jpg') center/cover no-repeat;
   color: #ffffff;
-  padding: 0 0 110px 0;
+  padding: 0 0 130px 0;
   border-radius: 0 0 35px 35px;
   position: relative;
-  margin-bottom: 80px;
+  margin-bottom: 30px;
   box-shadow: 0 10px 30px rgba(15, 56, 44, 0.2);
 }
 
@@ -146,6 +146,7 @@ body {
 /* ===== SEARCH BAR FLOATING ===== */
 .search-bar {
   position: absolute;
+  margin: 40px, 30px;
   bottom: -32px;
   left: 50%;
   transform: translateX(-50%);
@@ -203,11 +204,11 @@ body {
 /* ===== HERO SECTION 2 ===== */
 .hero-section {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 30px 40px 50px 40px;
+  padding: 30px 40px 30px 40px;
   gap: 40px;
 }
 .hero-content { flex: 1; }
@@ -231,16 +232,25 @@ body {
   font-weight: 700;
 }
 .hero-image-wrapper { flex: 0.8; display: flex; justify-content: flex-end; }
-.hero-img { width: 100%; max-width: 360px; height: auto; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15)); }
+.hero-img { 
+width: 100%; 
+max-width: 250px; 
+height: auto; 
+object-fit: contain; 
+filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));
+margin-top: 25px;
+ }
 
 /* ===== ABOUT GRID 3 KOLOM ===== */
 .about-grid {
   max-width: 1280px;
-  margin: -20px auto 60px auto;
+  margin: -70px auto 60px auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   padding: 0 40px;
+  position: relative; /* Ditambahkan agar z-index berfungsi */
+  z-index: 10;
 }
 .glass-box {
   background: white;
