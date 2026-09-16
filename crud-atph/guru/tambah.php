@@ -36,13 +36,13 @@ input[type=text]{width:100%;padding:13px 16px;border-radius:12px;border:1px soli
   <div class="sub">Agribisnis Tanaman Pangan & Hortikultura</div>
   <form method="post" enctype="multipart/form-data">
     <label>NIP</label>
-    <input type="text" name="Nip" required placeholder="046537">
+    <input type="text" name="Nip" required placeholder=>
     <label>Nama Guru</label>
-    <input type="text" name="Nama" required placeholder="Haechan">
+    <input type="text" name="Nama" required placeholder=>
     <label>Mapel Utama</label>
-    <input type="text" name="Mapel_Utama" required placeholder="Dasar ATPH">
+    <input type="text" name="Mapel_Utama" required placeholder=>
     <label>Wali Kelas</label>
-    <input type="text" name="Wali_Kelas" placeholder="XI ATPH 1">
+    <input type="text" name="Wali_Kelas" placeholder=>
     <label>Foto Guru</label>
     <div class="file-box"><input type="file" name="Foto" required></div>
     <button type="submit" name="simpan" class="btn-simpan">Simpan</button>
