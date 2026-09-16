@@ -1,42 +1,72 @@
-<?php include '../../koneksi.php'; $query = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC"); ?>
+<?php
+include '../../koneksi.php';
+$q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC");
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Guru ATPH</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATA GURU ATPH</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrapper">
-  <div class="container">
-    <h1 class="header-title">DATA GURU ATPH</h1>
-    <p class="subtitle">AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</p>
-    <a href="tambah.php" class="btn-tambah">+ Tambah Guru</a>
+<div class="glow"></div>
+<h1 class="judul">DATA GURU ATPH</h1>
+<p class="sub">AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</p>
 
-    <div class="card-grid">
-      <?php if ($query && mysqli_num_rows($query) > 0) {
-        while ($row = mysqli_fetch_assoc($query)) {
-          $foto = (!empty($row['Foto']) && file_exists("uploads/".$row['Foto'])) ? "uploads/".$row['Foto'] : "https://via.placeholder.com/250x300?text=No+Photo";
-      ?>
-          <div class="card">
-            <div class="card-img-wrapper"><img src="<?= $foto; ?>" alt="<?= $row['Nama']; ?>"></div>
-            <div class="card-info">
-              <div class="nip">NIP: <?= $row['Nip']; ?></div>
-              <h3><?= $row['Nama']; ?></h3>
-              <span class="badge"><?= $row['Mapel_Utama']; ?></span>
-              <span class="badge">Wali: <?= $row['Wali_Kelas'] ?: '-'; ?></span>
-              <div class="card-actions">
-                <a href="edit.php?nip=<?= $row['Nip']; ?>" class="btn-action btn-edit">Edit</a>
-                <a href="hapus.php?nip=<?= $row['Nip']; ?>" class="btn-action btn-hapus" onclick="return confirm('Yakin hapus data ini?')">Hapus</a>
-              </div>
-            </div>
-          </div>
-      <?php } } else { ?>
-        <div class="empty-state">Belum ada data guru. Silakan tambah data dulu.</div>
-      <?php } ?>
+<div class="wrap" id="wrap">
+<?php
+$no=0;
+while($d = mysqli_fetch_assoc($q)){
+  $no++;
+  $foto = "uploads/".$d['Foto'];
+  if(empty($d['Foto']) ||!file_exists($foto)){
+    $foto = "https://ui-avatars.com/api/?name=".urlencode($d['Nama'])."&background=2e7d32&color=fff&size=300";
+  }
+  $center = ($no==3)? 'center' : '';
+?>
+<div class="card <?= $center;?>">
+  <img src="<?= $foto;?>">
+  <div class="info">
+    <div class="name"><?= htmlspecialchars($d['Nama']);?></div>
+    <div class="nip">NIP: <?= htmlspecialchars($d['Nip']);?></div>
+    <div class="bottom">
+      <span><?= htmlspecialchars($d['Mapel_Utama']);?></span>
+      <span class="eth"><?= $d['Wali_Kelas']?: 'XI ATPH 1';?></span>
+    </div>
+    <div class="aksi">
+      <a href="edit.php?nip=<?= $d['Nip'];?>" class="edit">Edit</a>
+      <a href="hapus.php?nip=<?= $d['Nip'];?>" class="hapus" onclick="return confirm('Hapus?')">Hapus</a>
     </div>
   </div>
 </div>
+<?php }?>
+</div>
+
+<a href="tambah.php" class="tambah">+ Tambah Guru</a>
+
+<script>
+const wrap = document.getElementById('wrap');
+const cards = document.querySelectorAll('.card');
+const defaultCenter = 2; // index ke-3 (0,1,2) yang jadi gede awal
+
+cards.forEach((card, i) => {
+  card.addEventListener('mouseenter', () => {
+    cards.forEach(c => c.classList.remove('center'));
+    card.classList.add('center');
+  });
+});
+
+// kalau mouse keluar dari area, balikin ke tengah default
+wrap.addEventListener('mouseleave', () => {
+  cards.forEach(c => c.classList.remove('center'));
+  if(cards[defaultCenter]){
+    cards[defaultCenter].classList.add('center');
+  }
+});
+</script>
+
 </body>
 </html>

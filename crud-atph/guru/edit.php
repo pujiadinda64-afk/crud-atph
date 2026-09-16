@@ -1,71 +1,60 @@
 <?php
-include '../koneksi.php';
-
-$nip_lama = $_GET['nip'];
-$query = mysqli_query($koneksi, "SELECT * FROM guru WHERE Nip='$nip_lama'");
-$data = mysqli_fetch_assoc($query);
-
+include '../../koneksi.php';
+$nip = $_GET['nip'];
+$data = mysqli_fetch_assoc(mysqli_query($koneksi,"SELECT * FROM guru WHERE Nip='$nip'"));
 if(isset($_POST['update'])){
-  $nip = $_POST['nip'];
-  $nama = $_POST['nama'];
-  $mapel = $_POST['mapel'];
-  $wali = $_POST['wali'];
-  $foto_lama = $_POST['foto_lama'];
-
-  // kalau upload foto baru
-  if($_FILES['foto']['name'] != ""){
-    $foto = $_FILES['foto']['name'];
-    $tmp = $_FILES['foto']['tmp_name'];
-    $foto_baru = time().'_'.$foto;
-    move_uploaded_file($tmp, 'uploads/'.$foto_baru);
-    
-    if(file_exists('uploads/'.$foto_lama)){
-      unlink('uploads/'.$foto_lama);
-    }
-  } else {
-    $foto_baru = $foto_lama;
-  }
-
-  mysqli_query($koneksi, "UPDATE guru SET Nip='$nip', Nama='$nama', Mapel_Utama='$mapel', Wali_Kelas='$wali', Foto='$foto_baru' WHERE Nip='$nip_lama'");
-  
-  header("Location: index.php");
-  exit();
+  $nama=$_POST['Nama']; $mapel=$_POST['Mapel_Utama']; $wali=$_POST['Wali_Kelas'];
+  $foto=$_FILES['Foto']['name']; $tmp=$_FILES['Foto']['tmp_name'];
+  if($foto){ $fb=time()."_".$foto; move_uploaded_file($tmp,"uploads/".$fb); mysqli_query($koneksi,"UPDATE guru SET Nama='$nama',Mapel_Utama='$mapel',Wali_Kelas='$wali',Foto='$fb' WHERE Nip='$nip'"); }
+  else { mysqli_query($koneksi,"UPDATE guru SET Nama='$nama',Mapel_Utama='$mapel',Wali_Kelas='$wali' WHERE Nip='$nip'"); }
+  header("location:index.php"); exit;
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Edit Guru</title>
-  <link rel="stylesheet" href="../style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Guru</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+html{overflow-y:auto}
+body{min-height:100vh;background:#0a120a;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px 120px 20px;overflow-y:auto}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,rgba(60,120,40,0.25) 0%,rgba(10,18,10,1) 70%);z-index:-1}
+.card{width:100%;max-width:420px;background:linear-gradient(180deg,rgba(25,45,25,0.9) 0%,rgba(15,30,15,0.95) 100%);border:1px solid rgba(127,255,0,0.15);border-radius:20px;padding:28px 24px 32px 24px;box-shadow:0 0 80px rgba(127,255,0,0.12);margin-top:20px}
+.card h2{color:#7FFF00;text-align:center;font-size:24px;font-weight:800}
+.card .sub{color:rgba(255,255,255,0.45);text-align:center;font-size:11px;font-weight:700;margin:8px 0 22px;text-transform:uppercase}
+label{display:block;text-align:left;color:rgba(255,255,255,0.9);font-size:11px;font-weight:700;margin:18px 0 8px 4px;letter-spacing:0.8px;text-transform:uppercase}
+input[type=text]{width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.45);color:white;outline:none;font-size:14px}
+.file-box{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.45);color:white}
+.foto-lama{margin-top:14px;display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:12px;color:rgba(255,255,255,0.7);font-size:11px}
+.foto-lama img{width:55px;height:55px;object-fit:cover;border-radius:10px}
+.btn-simpan{width:100%;margin-top:24px;padding:13px;background:#7FFF00;color:#000;border:none;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 0 20px rgba(127,255,0,0.4)}
+.batal{display:block;text-align:center;margin-top:16px;padding:12px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;background:rgba(255,255,255,0.06);border-radius:12px}
+</style>
 </head>
 <body>
-<div class="form-wrapper">
-  <div class="form-box">
-    <div class="form-header">
-      <h1>Edit Data Guru</h1>
-      <p><?= $data['Nama']; ?> - <?= $data['Nip']; ?></p>
+<div class="card">
+  <h2>Edit Data Guru</h2>
+  <div class="sub">Agribisnis Tanaman Pangan & Hortikultura</div>
+  <form method="post" enctype="multipart/form-data">
+    <label>NIP</label>
+    <input type="text" value="<?= $data['Nip']; ?>" disabled style="opacity:0.5">
+    <label>Nama Guru</label>
+    <input type="text" name="Nama" value="<?= htmlspecialchars($data['Nama']); ?>" required>
+    <label>Mapel Utama</label>
+    <input type="text" name="Mapel_Utama" value="<?= htmlspecialchars($data['Mapel_Utama']); ?>" required>
+    <label>Wali Kelas</label>
+    <input type="text" name="Wali_Kelas" value="<?= htmlspecialchars($data['Wali_Kelas']); ?>">
+    <div class="foto-lama">
+      <img src="uploads/<?= $data['Foto']; ?>" onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($data['Nama']); ?>&background=2e7d32&color=fff'">
+      <div><b>Foto Lama:</b><br><?= $data['Foto'] ?: 'Tidak ada foto'; ?></div>
     </div>
-    <form method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="foto_lama" value="<?= $data['Foto']; ?>">
-      
-      <div class="form-group"><label>NIP</label><input type="text" name="nip" value="<?= $data['Nip']; ?>" required></div>
-      <div class="form-group"><label>Nama Guru</label><input type="text" name="nama" value="<?= $data['Nama']; ?>" required></div>
-      <div class="form-group"><label>Mapel Utama</label><input type="text" name="mapel" value="<?= $data['Mapel_Utama']; ?>" required></div>
-      <div class="form-group"><label>Wali Kelas</label><input type="text" name="wali" value="<?= $data['Wali_Kelas']; ?>"></div>
-      
-      <div class="form-group">
-        <label>Foto Lama</label><br>
-        <img src="uploads/<?= $data['Foto']; ?>" style="width:100px; border-radius:8px;" onerror="this.src='https://via.placeholder.com/100'">
-      </div>
-
-      <div class="form-group"><label>Ganti Foto (Kosongkan jika tidak ganti)</label><input type="file" name="foto"></div>
-      
-      <div class="btn-group">
-        <button type="submit" name="update" class="btn btn-simpan">Update</button>
-        <a href="index.php" class="btn btn-batal">Batal</a>
-      </div>
-    </form>
-  </div>
+    <label>Ganti Foto Guru</label>
+    <div class="file-box"><input type="file" name="Foto"></div>
+    <button type="submit" name="update" class="btn-simpan">Update</button>
+    <a href="index.php" class="batal">Batal</a>
+  </form>
 </div>
 </body>
 </html>
