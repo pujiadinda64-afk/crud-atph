@@ -1,5 +1,19 @@
 <?php
-include '../koneksi.php';
+session_start(); 
+// 1. Cek apakah user BELUM LOGIN SAMA SEKALI
+if (!isset($_SESSION['user_id'])) {
+    echo "<script>alert('Silakan login terlebih dahulu!'); window.location='../../login.php';</script>";
+    exit();
+}
+
+// 2. Cek apakah role-nya bukan admin/guru (sesuaikan kebutuhan, misal hanya admin)
+if ($_SESSION['role'] != 'admin') 'siswa' {
+    echo "<script>alert('Akses ditolak! Anda tidak memiliki izin.'); window.location='index.php';</script>";
+    exit();
+}
+// ... kode proses selanjutnya (tambah/edit/hapus) ...
+?>
+include '../../koneksi.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 

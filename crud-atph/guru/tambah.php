@@ -1,4 +1,12 @@
 <?php
+session_start(); // Wajib ada untuk membaca data login
+
+// Cek apakah yang mengakses adalah admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Fitur tambah data khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
 include '../../koneksi.php';
 if(isset($_POST['simpan'])){
   $nip = $_POST['Nip']; $nama = $_POST['Nama']; $mapel = $_POST['Mapel_Utama']; $wali = $_POST['Wali_Kelas'];

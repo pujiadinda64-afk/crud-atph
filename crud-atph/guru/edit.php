@@ -1,7 +1,16 @@
 <?php
+session_start(); // Wajib ada untuk membaca status login
+
+// Cek apakah user sudah login dan apakah rolenya adalah admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
 include '../../koneksi.php';
 $nip = $_GET['nip'];
 $data = mysqli_fetch_assoc(mysqli_query($koneksi,"SELECT * FROM guru WHERE Nip='$nip'"));
+
 if(isset($_POST['update'])){
   $nama=$_POST['Nama']; $mapel=$_POST['Mapel_Utama']; $wali=$_POST['Wali_Kelas'];
   $foto=$_FILES['Foto']['name']; $tmp=$_FILES['Foto']['tmp_name'];

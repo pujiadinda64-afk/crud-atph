@@ -9,15 +9,22 @@ if (isset($_POST['login'])) {
     $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username = '$username'");
     $user  = mysqli_fetch_assoc($query);
 
-    if ($user && password_verify($password, $user['password'])) {
+  if ($user && $password == $user['password']) {
         $_SESSION['user_id']      = $user['id_user'];
         $_SESSION['username']     = $user['username'];
         $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
         $_SESSION['role']         = $user['role'];
 
-        // Redirect sesuai role
+        // CEK APAKAH PROFIL SUDAH DIISI ATAU BELUM
+        if (empty($user['nama_lengkap']) || empty($user['email'])) {
+            // Jika data profil masih kosong, arahkan ke halaman profil.php
+            header("Location: profil.php");
+            exit();
+        }
+
+        // Redirect sesuai role jika profil sudah lengkap
         if ($user['role'] == 'admin') {
-            header("Location: index.php"); // Atau ke dashboard admin
+            header("Location: index.php"); // Atau dashboard admin
         } else {
             header("Location: index.php"); // Ke halaman utama siswa
         }
@@ -25,6 +32,7 @@ if (isset($_POST['login'])) {
     } else {
         $error = "Username atau password salah!";
     }
+
 }
 ?>
 
