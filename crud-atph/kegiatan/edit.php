@@ -1,18 +1,18 @@
 <?php
-session_start(); 
-// 1. Cek apakah user BELUM LOGIN SAMA SEKALI
-if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Silakan login terlebih dahulu!'); window.location='../../login.php';</script>";
+session_start();
+
+// 1. Cek apakah user belum login sama sekali
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
     exit();
 }
 
-// 2. Cek apakah role-nya bukan admin/guru (sesuaikan kebutuhan, misal hanya admin)
-if ($_SESSION['role'] != 'admin') 'siswa' {
-    echo "<script>alert('Akses ditolak! Anda tidak memiliki izin.'); window.location='index.php';</script>";
+// 2. Cek apakah yang login bukan admin (siswa/tamu ditolak)
+if ($_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Hanya admin yang dapat melakukan perubahan.'); window.location='index.php';</script>";
     exit();
 }
-// ... kode proses selanjutnya (tambah/edit/hapus) ...
-?>
+
 include '../../koneksi.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
