@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 07, 2026 at 01:33 PM
+-- Generation Time: Sep 20, 2026 at 06:47 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -54,14 +54,8 @@ CREATE TABLE `foto_kegiatan` (
 
 INSERT INTO `foto_kegiatan` (`id_foto`, `id_kegiatan`, `nama_foto`, `keterangan`) VALUES
 (1, 1, '1788674014_suga1-removebg-preview.png', ''),
-(2, 2, '1788674288_KETUA.png', ''),
-(4, 2, '1788674288_byngn.jpg', ''),
-(5, 2, '1788674288_bts-removebg-preview.png', ''),
-(6, 2, '1788674288_army-removebg-preview.png', ''),
-(7, 3, '1788684233_Screenshot (98).png', ''),
-(8, 3, '1788684233_Screenshot (99).png', ''),
-(9, 3, '1788684233_Screenshot (100).png', ''),
-(10, 3, '1788684233_Screenshot (101).png', '');
+(11, 4, '1789881733_jibril5.jpeg', NULL),
+(12, 4, '1789882496_nilong.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -70,12 +64,19 @@ INSERT INTO `foto_kegiatan` (`id_foto`, `id_kegiatan`, `nama_foto`, `keterangan`
 --
 
 CREATE TABLE `guru` (
-  `id_guru` int NOT NULL,
-  `nip` varchar(30) NOT NULL,
-  `nama_guru` varchar(100) NOT NULL,
-  `jabatan` varchar(50) NOT NULL,
-  `foto` varchar(255) DEFAULT 'default.jpg'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `Nip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Mapel_Utama` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mapel utama yg diampu',
+  `Wali_Kelas` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Contoh: 10 ATPh 1, 11 ATPh 2, 12 ATPh 3',
+  `Foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Nama file foto guru'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `guru`
+--
+
+INSERT INTO `guru` (`Nip`, `Nama`, `Mapel_Utama`, `Wali_Kelas`, `Foto`) VALUES
+('08956058', 'Suga Min', 'Dasar', 'XI ATPH 10', '1789531767_pa2.jpeg');
 
 -- --------------------------------------------------------
 
@@ -114,8 +115,9 @@ CREATE TABLE `kegiatan` (
 
 INSERT INTO `kegiatan` (`id_kegiatan`, `nama_kegiatan`, `deskripsi`, `pembimbing`, `tanggal`, `foto`) VALUES
 (1, 'Penanapan melon hidropolik', 'fkhfkfioayfkasjfufhsjfasfjk', 'Bu Dera', '2026-09-16', '1788674014_army.jpg'),
-(2, 'gjhfgjd', 'jskjadkqhdjhuifwjcuwcedgckdgcgcjksdcuifgvufgcysdfchs', 'hwkdhcwjkdhcuicuecu', '2026-09-10', '1788674288_Adinda.png'),
-(3, 'dgfghdufu', 'xserwrgfhouklhjkgdd', 'vfdred', '2026-08-19', '1788684233_Screenshot (98).png');
+(2, 'Penyulaman Bibit', 'Melakuan Penyulaman Bibit pada saat program Magang kelas 10 ATPH 1 di Lembang, Bandung', 'Pak Sule', '2026-06-11', '1788925333_penyulaman bibit.jpeg'),
+(3, 'Penyiraman Bibit', 'Melakukan penyiraman Bibit pada Saat Program Magang Kelas Industri 10 ATPH 1  ', 'Pak Sule', '2026-06-08', '1788923386_penanaman.jpeg'),
+(4, 'hfjshfjkdhfsdjk', 'gfhsdgfhsdgsfgj', 'dfdwrerdgh', '2026-09-29', '1789521816_mugh.jpg');
 
 -- --------------------------------------------------------
 
@@ -144,17 +146,19 @@ CREATE TABLE `users` (
   `id_user` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `nama_lengkap` varchar(100) NOT NULL,
-  `role` enum('admin','siswa') NOT NULL DEFAULT 'siswa'
+  `role` enum('admin','siswa') NOT NULL,
+  `nama_lengkap` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `kelas` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, `nama_lengkap`, `role`) VALUES
-(1, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrator ATPH', 'admin'),
-(2, 'siswa', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Siswa ATPH', 'siswa');
+INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `nama_lengkap`, `email`, `kelas`) VALUES
+(1234, 'siswa01', 's1sw4', 'siswa', 'Adinda Puji Lestari', 'pujiadinda64@gmail.com', 'XI ATPH 1'),
+(4321, 'admin', '4dm1n', 'admin', 'Adinda Puji Lestari', 'pujiadinda64@gmail.com', NULL);
 
 --
 -- Indexes for dumped tables
@@ -177,7 +181,7 @@ ALTER TABLE `foto_kegiatan`
 -- Indexes for table `guru`
 --
 ALTER TABLE `guru`
-  ADD PRIMARY KEY (`id_guru`);
+  ADD PRIMARY KEY (`Nip`);
 
 --
 -- Indexes for table `jadwal`
@@ -203,8 +207,7 @@ ALTER TABLE `peminjaman`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id_user`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD PRIMARY KEY (`id_user`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -220,13 +223,7 @@ ALTER TABLE `alat`
 -- AUTO_INCREMENT for table `foto_kegiatan`
 --
 ALTER TABLE `foto_kegiatan`
-  MODIFY `id_foto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `guru`
---
-ALTER TABLE `guru`
-  MODIFY `id_guru` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_foto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `jadwal`
@@ -238,7 +235,7 @@ ALTER TABLE `jadwal`
 -- AUTO_INCREMENT for table `kegiatan`
 --
 ALTER TABLE `kegiatan`
-  MODIFY `id_kegiatan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_kegiatan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `peminjaman`
@@ -250,7 +247,7 @@ ALTER TABLE `peminjaman`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4322;
 
 --
 -- Constraints for dumped tables
@@ -266,7 +263,6 @@ ALTER TABLE `foto_kegiatan`
 -- Constraints for table `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  ADD CONSTRAINT `peminjaman_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
   ADD CONSTRAINT `peminjaman_ibfk_2` FOREIGN KEY (`id_alat`) REFERENCES `alat` (`id_alat`) ON DELETE CASCADE;
 COMMIT;
 
