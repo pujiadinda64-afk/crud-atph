@@ -1,6 +1,11 @@
 <?php
 include '../../koneksi.php';
 
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
 if (isset($_POST['submit'])) {
     $nama_kegiatan = $_POST['nama_kegiatan'];
     $deskripsi     = $_POST['deskripsi'];
