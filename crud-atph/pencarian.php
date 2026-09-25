@@ -14,13 +14,18 @@ $kategori = isset($_GET['kategori']) ? $_GET['kategori'] : 'guru';
     <title>Pencarian Data Proyek ATPH</title>
     <style>
         /* Styling Utama - Tema Dark Nature / ATPH */
+        /* Styling Utama - Background Foto dengan Efek Blur */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0b130f; /* Latar belakang hijau sangat gelap ala hutan/pertanian malam */
+            background-image: linear-gradient(rgba(11, 19, 15, 0.50), rgba(11, 19, 15, 0.65)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920&auto=format&fit=crop'); /* Ganti URL foto di sini jika ingin pakai foto lokal */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: #e2e8f0;
             margin: 0;
             padding: 40px;
             min-height: 100vh;
+            backdrop-filter: blur(8px); /* Efek blur pada background */
         }
 
         h2, h3 {
@@ -52,47 +57,55 @@ $kategori = isset($_GET['kategori']) ? $_GET['kategori'] : 'guru';
         }
 
         /* Form Pencarian */
+       /* Form Pencarian - Gaya Glassmorphism Elegan */
         form {
-            background: #132219;
-            padding: 18px 22px;
-            border-radius: 12px;
-            border: 1px solid #1f3d2b;
+            background: rgba(19, 34, 25, 0.65); /* Warna hijau gelap semi-transparan */
+            backdrop-filter: blur(10px); /* Efek kaca buram di belakang kotak */
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(74, 222, 128, 0.3); /* Border hijau neon tipis transparan */
             display: inline-flex;
-            gap: 12px;
+            gap: 14px;
             margin-bottom: 25px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             align-items: center;
         }
 
         form input[type="text"], form select {
-            background: #0b130f;
-            border: 1px solid #2d5a3f;
+            background: rgba(11, 19, 15, 0.7);
+            border: 1px solid rgba(45, 90, 63, 0.8);
             color: #f8fafc;
-            padding: 10px 14px;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 10px;
             outline: none;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
 
         form input[type="text"]:focus, form select:focus {
             border-color: #4ade80;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.25);
         }
 
         form button {
-            background-color: #16a34a; /* Tombol hijau tanaman */
+            background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
 
         form button:hover {
-            background-color: #15803d;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
         }
-
+        
         hr {
             border: 0;
             height: 1px;
