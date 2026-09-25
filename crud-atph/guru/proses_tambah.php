@@ -1,5 +1,5 @@
 <?php
-include '../koneksi.php';
+include '../config/koneksi.php';
 
 if (isset($_POST['simpan'])) {
     $nip          = $_POST['nip'];

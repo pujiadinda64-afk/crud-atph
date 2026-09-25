@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../config/koneksi.php';
 $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DESC");
 ?>
 
@@ -14,21 +14,21 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
     * { box-sizing: border-box; }
     
     /* Background Utama Full Layar Tema ATPH (Gradasi Hijau Segar) */
-    body { 
+ body { 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        background: linear-gradient(135deg, #1b4332 0%, #2e7d32 50%, #a7f3d0 100%);
-        background-attachment: fixed;
+        background: url('../sawah.jpg') no-repeat center center fixed;
+        background-size: cover;
         color: #334155; 
         margin: 0; 
         padding: 30px 20px; 
-        min-height: 100vh;
+        min-height: 100vh; 
     }
 
     /* Container Card Utama Efek Kaca (Glassmorphism Transparan) */
     .container { 
         max-width: 1150px; 
         margin: 0 auto; 
-        background: rgba(255, 255, 255, 0.85); 
+        background: rgba(255, 255, 255, 0.50); 
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         padding: 30px; 
@@ -279,6 +279,20 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
 <body>
 
 <div class="container">
+    <?php
+    $pesan = $_GET['pesan'] ?? '';
+    $messages = [
+        'hapus_sukses' => 'Kegiatan berhasil dihapus.',
+        'hapus_gagal' => 'Kegiatan gagal dihapus.',
+        'tidak_ditemukan' => 'Data kegiatan tidak ditemukan.'
+    ];
+    if (isset($messages[$pesan])):
+    ?>
+    <div style="margin-bottom:18px;padding:12px 16px;border-radius:10px;background:#e8f5e9;color:#1b5e20;font-weight:700;">
+        <?= htmlspecialchars($messages[$pesan]); ?>
+    </div>
+    <?php endif; ?>
+
     <a href="../index.php" class="btn btn-back">&larr; Kembali ke Dashboard</a>
     
     <div class="header">

@@ -1,9 +1,18 @@
 <?php
-include "../../koneksi.php";
+session_start();
+
+include '../config/koneksi.php';
 
 /** @var mysqli $koneksi */
 
-$hasil = mysqli_query($koneksi, "SELECT * FROM alat ORDER BY id_alat desc ");
+// logout
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    session_destroy();
+    header("Location: ../index.php");
+    exit;
+}
+
+$hasil = mysqli_query($koneksi, "SELECT *, id_alat AS id FROM alat ORDER BY id_alat DESC");
 $daftarAlat = [];
 while ($baris = mysqli_fetch_assoc($hasil)) {
     $daftarAlat[] = $baris;
@@ -15,6 +24,8 @@ $teksPesan = [
     "tambah_sukses" => "Alat baru berhasil ditambahkan.",
     "hapus_sukses"  => "Alat berhasil dihapus.",
     "hapus_gagal"   => "Gagal menghapus alat.",
+    "edit_sukses"   => "Data alat berhasil diperbarui.",
+    "edit_gagal"    => "Data alat gagal diperbarui.",
     "tidak_ditemukan" => "Data alat tidak ditemukan.",
 ];
 
@@ -54,12 +65,12 @@ $PALET = [
 
 function renderIkon($alat, $ICONS) {
     if (!empty($alat["foto"]) && file_exists("uploads/" . $alat["foto"])) {
-        return '<img src="uploads/' . htmlspecialchars($alat["foto"]) . '" alt="' . htmlspecialchars($alat["nama"]) . '" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
+        return '<img src="uploads/' . htmlspecialchars($alat["foto"]) . '" alt="' . htmlspecialchars($alat["nama_alat"]) . '" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
     }
     if (!empty($alat["icon_key"]) && isset($ICONS[$alat["icon_key"]])) {
         return $ICONS[$alat["icon_key"]];
     }
-    $huruf = strtoupper(mb_substr($alat["nama"], 0, 1));
+    $huruf = strtoupper(mb_substr($alat["nama_alat"], 0, 1));
     return '<div style="font-size:34px;font-weight:800;color:#fff;">' . $huruf . '</div>';
 }
 
@@ -67,12 +78,6 @@ function tanggalIndonesia() {
     $hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
     $bulan = ["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
     return $hari[date("w")] . ", " . date("j") . " " . $bulan[(int)date("n")] . " " . date("Y");
-}
-
-if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    session_destroy();
-    header("Location: crud-atph");
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -154,7 +159,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   .card .icon-wrap{height:96px; border-radius:16px; background:var(--acc-bg); display:flex; align-items:center; justify-content:center; margin:20px 0 12px; overflow:hidden;}
   .card .icon-wrap svg{height:66px; width:auto;}
   .card h3{font-size:15.5px;}
-  .card p.fungsi{font-size:12.5px; color:var(--ink-soft); margin-top:5px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .card p.fungsi{font-size:12.5px; color:var(--ink-soft); margin-top:5px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
   .card .tap{font-size:11px; color:var(--acc); font-weight:800; margin-top:10px;}
   .empty{text-align:center; padding:60px 20px; color:var(--ink-soft);}
   .overlay{position:fixed; inset:0; background:rgba(15,60,35,.45); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;}
@@ -197,7 +202,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 </style>
 </head>
 <body>
-<a href="../index.php" style="position:fixed; bottom:20px; right:20px; background:#FEE2E2; color:#DC2626; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:800; text-decoration:none; box-shadow:var(--shadow); z-index:100;">🚪 Logout</a >    
+<a href="?action=logout" style="position:fixed; bottom:20px; right:20px; background:#FEE2E2; color:#DC2626; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:800; text-decoration:none; box-shadow:var(--shadow); z-index:100;">🚪 Logout</a>
 
 <div class="leaf-pattern"></div>
 
@@ -247,14 +252,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     <div class="grid" id="grid">
       <?php foreach ($daftarAlat as $i => $alat):
           $acc = $PALET[$i % count($PALET)]; ?>
-      <div class="card" data-nama="<?php echo htmlspecialchars(strtolower($alat['nama'])); ?>" data-id="<?php echo $alat['id']; ?>" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
-        <span class="idbadge">#<?php echo $alat['id']; ?></span>
+      <div class="card" data-nama="<?php echo htmlspecialchars(strtolower($alat['nama_alat'])) ;?>" data-id="<?php echo $alat['id']; ?>" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
+        <span class="idbadge">#<?php echo $alat['id_alat']; ?></span>
         <button class="fav" title="Tandai favorit">☆</button>
         <div class="icon-wrap"><?php echo renderIkon($alat, $ICONS); ?></div>
-        <h3><?php echo htmlspecialchars($alat['nama']); ?></h3>
-        <p class="fungsi"><?php echo htmlspecialchars($alat['fungsi']); ?></p>
+        <h3><?php echo htmlspecialchars($alat['nama_alat']); ?></h3>
+        <p class="fungsi"><?php echo htmlspecialchars($alat['cara_pakai'] ?? ''); ?></p>
         <div class="tap">Ketuk untuk detail →</div>
-        <script type="application/json" class="detail-data"><?php echo json_encode(['cara_pakai' => $alat['cara_pakai']]); ?></script>
+        <script type="application/json" class="detail-data"><?php echo json_encode(['cara_pakai' => $alat['cara_pakai'] ?? '']); ?></script>
       </div>
       <?php endforeach; ?>
     </div>
@@ -270,15 +275,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       <form class="tool-form" action="tambah.php" method="POST" enctype="multipart/form-data">
         <div class="full">
           <label>Nama Alat</label>
-          <input type="text" name="nama" placeholder="mis. Cangkul" required>
+          <input type="text" name="nama_alat" placeholder="mis. Cangkul" required>
         </div>
         <div class="full">
-          <label>Fungsi</label>
-          <textarea name="fungsi" placeholder="Fungsi singkat alat ini…" required></textarea>
+          <label>Jumlah Stok</label>
+          <input type="number" name="jumlah_stok" placeholder="mis. 10" required>
         </div>
         <div class="full">
-          <label>Cara Pakai</label>
-          <textarea name="cara_pakai" placeholder="Langkah singkat cara memakainya…"></textarea>
+          <label>Kondisi</label>
+          <input type="text" name="kondisi" placeholder="mis. Baik" required>
         </div>
         <div class="full">
           <label>Foto Alat (jpg/png/webp, maks 2MB)</label>
@@ -297,11 +302,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         <div class="row" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
           <div class="ic"><?php echo renderIkon($alat, $ICONS); ?></div>
           <div class="info">
-            <div class="nm"><?php echo htmlspecialchars($alat['nama']); ?> <span class="idnum">#<?php echo $alat['id']; ?></span></div>
-            <div class="fg"><?php echo htmlspecialchars($alat['fungsi']); ?></div>
+            <div class="nm"><?php echo htmlspecialchars($alat['nama_alat']); ?> <span class="idnum">#<?php echo $alat['id']; ?></span></div>
+            <div class="fg"><?php echo htmlspecialchars($alat['cara_pakai']); ?></div>
           </div>
-          <a class="det-link" href="detail.php?id=<?php echo $alat['id']; ?>">📄 Detail</a>
-          <a class="del-link" href="hapus.php?id=<?php echo $alat['id']; ?>" onclick="return confirm('Hapus &quot;<?php echo htmlspecialchars(addslashes($alat['nama'])); ?>&quot; dari daftar?');">🗑️ Hapus</a>
+          <a class="det-link" href="detail.php?id=<?php echo $alat['id_alat']; ?>">📄 Detail</a>
+          <a class="del-link" 
+           href="hapus.php?id=<?php echo $alat['id']; ?>" 
+            onclick="return confirm('Hapus &quot;<?php echo htmlspecialchars(addslashes($alat['nama_alat'] ?? '')); ?>&quot; dari daftar?');">
+            🗑️ Hapus
+          </a>
         </div>
         <?php endforeach; ?>
       </div>
