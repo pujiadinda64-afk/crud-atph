@@ -96,8 +96,39 @@ $is_logged_in = isset($_SESSION['user_id']);
 <section id="kontak">
   <div class="contact-box">
     <div class="contact-grid">
-      <div class="contact-info"><h2>🛠️ Mari Terhubung Bersama Kami</h2><p class="contact-desc">Punya pertanyaan seputar jurusan ATPH, kerjasama, atau program praktik? Jangan ragu untuk menghubungi kami.</p><div class="info-list"><div class="info-item"><div class="info-icon">✉️</div><div><span class="info-label">EMAIL</span><p>atph@smkn1.sch.id</p></div></div><div class="info-item"><div class="info-icon">📞</div><div><span class="info-label">TELEPON</span><p>+62 812-3456-7890</p></div></div><div class="info-item"><div class="info-icon">📍</div><div><span class="info-label">LOKASI</span><p>Area Green House SMKN 1</p></div></div></div></div>
-      <div class="contact-form-wrapper"><form class="contact-form"><div class="form-row"><input type="text" placeholder="Nama Anda"><input type="email" placeholder="Email Anda"></div><input type="text" placeholder="Subjek / Perihal"><textarea rows="4" placeholder="Tuliskan pesan Anda..."></textarea><button type="submit" class="btn-submit-contact">Kirim Pesan ↗</button></form></div>
+      <div class="contact-info">
+        <h2>🛠️ Mari Terhubung Bersama Kami</h2>
+        <p class="contact-desc">Punya pertanyaan seputar jurusan ATPH, kerjasama, atau program praktik? Jangan ragu untuk menghubungi kami.</p>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-icon">✉️</div>
+            <div><span class="info-label">EMAIL</span><p>atph@smkn1.sch.id</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div><span class="info-label">TELEPON</span><p>+62 812-3456-7890</p></div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div><span class="info-label">LOKASI</span><p>Area Green House SMKN 1</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrapper">
+        <!-- Tambahkan action dan method di sini -->
+        <form action="https://formspree.io/f/mkjgvyzb" method="POST" class="contact-form">
+          <div class="form-row">
+            <!-- Tambahkan attribute name="nama" dan name="email" -->
+            <input type="text" name="nama" placeholder="Nama Anda" required>
+            <input type="email" name="email" placeholder="Email Anda" required>
+          </div>
+          <!-- Tambahkan attribute name="subjek" -->
+          <input type="text" name="subjek" placeholder="Subjek / Perihal" required>
+          <!-- Tambahkan attribute name="pesan" -->
+          <textarea name="pesan" rows="4" placeholder="Tuliskan pesan Anda..." required></textarea>
+          <button type="submit" class="btn-submit-contact">Kirim Pesan ↗</button>
+        </form>
+      </div>
     </div>
   </div>
 </section>

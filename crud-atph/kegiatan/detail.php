@@ -179,13 +179,33 @@ if (!$data) {
     </div>
 
     <!-- Layout Grid Foto & Deskripsi -->
-    <div class="bento-grid">
+<div class="bento-grid">
         <div class="img-container">
-            <?php if (!empty($data['foto']) && file_exists('uploads/' . $data['foto'])): ?>
-                <div class="img-bg-blur" style="background-image: url('uploads/<?= htmlspecialchars($data['foto']); ?>');"></div>
-                <img src="uploads/<?= htmlspecialchars($data['foto']); ?>" class="img-main" alt="Foto Kegiatan">
+            <?php 
+                $nama_file = $data['foto'] ?? '';
+                $file_path = 'uploads/' . $nama_file;
+                $ada_file  = (!empty($nama_file) && file_exists($file_path));
+                
+                // Cek ekstensi file apakah video atau foto
+                $ekstensi = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
+                $ekstensi_video = ['mp4', 'webm', 'ogg', 'mov', 'mkv'];
+                $is_video = in_array($ekstensi, $ekstensi_video);
+            ?>
+
+            <?php if ($ada_file): ?>
+                <?php if ($is_video): ?>
+                    <!-- Jika file adalah VIDEO di halaman detail -->
+                    <video class="img-main" controls style="width: 100%; height: 100%; object-fit: cover;">
+                        <source src="<?= $file_path; ?>" type="video/<?= $ekstensi; ?>">
+                        Browser Anda tidak mendukung pemutar video.
+                    </video>
+                <?php else: ?>
+                    <!-- Jika file adalah FOTO di halaman detail -->
+                    <div class="img-bg-blur" style="background-image: url('<?= $file_path; ?>');"></div>
+                    <img src="<?= $file_path; ?>" class="img-main" alt="Foto Kegiatan">
+                <?php endif; ?>
             <?php else: ?>
-                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#ffffff; font-weight:600;">Tanpa Foto Utama</div>
+                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#ffffff; font-weight:600;">Tanpa Media Utama</div>
             <?php endif; ?>
         </div>
 

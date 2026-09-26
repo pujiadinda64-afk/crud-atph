@@ -12,12 +12,12 @@ if (isset($_POST['submit'])) {
     $pembimbing    = $_POST['pembimbing'];
     $tanggal       = $_POST['tanggal'];
 
-    // Upload Foto Utama
+// 1. Ubah bagian Upload Foto Utama ini:
     $foto_utama = time() . '_' . $_FILES['foto_utama']['name'];
     $tmp_utama  = $_FILES['foto_utama']['tmp_name'];
     move_uploaded_file($tmp_utama, 'uploads/' . $foto_utama);
 
-    // Simpan Data Utama Kegiatan
+    // 2. Dan pastikan bagian Query INSERT ini memakai variabel $foto_utama:
     $query = "INSERT INTO kegiatan (nama_kegiatan, deskripsi, pembimbing, tanggal, foto) 
               VALUES ('$nama_kegiatan', '$deskripsi', '$pembimbing', '$tanggal', '$foto_utama')";
     mysqli_query($koneksi, $query);
@@ -169,8 +169,8 @@ if (isset($_POST['submit'])) {
             <label>Tanggal</label>
             <input type="date" name="tanggal" required>
 
-            <label>Foto Utama (Cover)</label>
-            <input type="file" name="foto" required>
+           <label>Media Utama (Foto / Video)</label>
+           <input type="file" name="foto_utama" accept="image/*,video/mp4,video/webm,video/ogg,video/mkv" required>
 
             <div class="btn-container">
                 <button type="submit" name="simpan">Simpan</button>

@@ -289,19 +289,35 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
         <a href="tambah.php" class="btn btn-add"><span>+</span> Tambah Kegiatan</a>
     </div>
 
-    <div class="slider-wrapper">
+   <div class="slider-wrapper">
         <button class="arrow-btn left" onclick="slideLeft()">&#10094;</button>
 
         <div class="card-slider" id="cardSlider">
             <?php while($d = mysqli_fetch_array($result)) { 
-                $foto_src = (!empty($d['foto']) && file_exists('uploads/' . $d['foto'])) ? 'uploads/' . $d['foto'] : '';
+                $nama_file = $d['foto'] ?? '';
+                $file_path = 'uploads/' . $nama_file;
+                $ada_file = (!empty($nama_file) && file_exists($file_path));
+                
+                // Cek ekstensi file untuk menentukan apakah ini video atau foto
+                $ekstensi = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
+                $ekstensi_video = ['mp4', 'webm', 'ogg', 'mov', 'mkv'];
+                $is_video = in_array($ekstensi, $ekstensi_video);
             ?>
                 <div class="card" onclick="window.location.href='detail.php?id=<?= $d['id_kegiatan']; ?>'">
                     <div class="card-img-wrapper">
-                        <?php if ($foto_src): ?>
-                            <img src="<?= $foto_src; ?>" class="card-img" alt="Foto Kegiatan">
+                        <?php if ($ada_file): ?>
+                            <?php if ($is_video): ?>
+                                <!-- Jika file adalah VIDEO -->
+                                <video class="card-img" controls style="object-fit: cover;">
+                                    <source src="<?= $file_path; ?>" type="video/<?= $ekstensi; ?>">
+                                    Browser Anda tidak mendukung pemutar video.
+                                </video>
+                            <?php else: ?>
+                                <!-- Jika file adalah FOTO -->
+                                <img src="<?= $file_path; ?>" class="card-img" alt="Foto Kegiatan">
+                            <?php endif; ?>
                         <?php else: ?>
-                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8; font-size:13px; font-weight:600;">Tanpa Foto</div>
+                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8; font-size:13px; font-weight:600;">Tanpa Media</div>
                         <?php endif; ?>
                         <span class="card-date"><?= date('d M Y', strtotime($d['tanggal'])); ?></span>
                     </div>
