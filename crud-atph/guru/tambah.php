@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit();
 }
 
-include '../../koneksi.php';
+include '../config/koneksi.php';
 if(isset($_POST['simpan'])){
   $nip = $_POST['Nip']; $nama = $_POST['Nama']; $mapel = $_POST['Mapel_Utama']; $wali = $_POST['Wali_Kelas'];
   $foto = $_FILES['Foto']['name']; $tmp = $_FILES['Foto']['tmp_name'];

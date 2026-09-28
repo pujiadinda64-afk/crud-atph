@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit();
 }
 
-include '../../koneksi.php';
+include '../config/koneksi.php';
 $nip = $_GET['nip'];
 $data = mysqli_fetch_assoc(mysqli_query($koneksi,"SELECT * FROM guru WHERE Nip='$nip'"));
 

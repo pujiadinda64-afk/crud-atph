@@ -1,19 +1,12 @@
 <?php
 session_start();
 
-// 1. Cek apakah user belum login sama sekali
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+if (($_SESSION['role'] ?? '') !== 'admin') {
     echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
     exit();
 }
 
-// 2. Cek apakah yang login bukan admin (siswa/tamu ditolak)
-if ($_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Hanya admin yang dapat melakukan perubahan.'); window.location='index.php';</script>";
-    exit();
-}
-
-include '../../koneksi.php';
+include '../config/koneksi.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 

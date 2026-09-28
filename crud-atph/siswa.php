@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../koneksi.php';
+include 'config/koneksi.php';
 
 // Proteksi Halaman: Hanya Siswa yang bisa akses
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {

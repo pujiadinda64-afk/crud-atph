@@ -3,7 +3,7 @@ session_start();
 
 // 1. Cek apakah user belum login sama sekali
 if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Silakan login terlebih dahulu!'); window.location='../../login.php';</script>";
+    echo "<script>alert('Silakan login terlebih dahulu!'); window.location='login.php';</script>";
     exit();
 }
 
@@ -13,7 +13,7 @@ if ($_SESSION['role'] != 'admin') {
     exit();
 }
 
-include '../../koneksi.php';
+include 'config/koneksi.php';
 ?>
 
 <!DOCTYPE html>

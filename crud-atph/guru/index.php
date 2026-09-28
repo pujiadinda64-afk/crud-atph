@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../config/koneksi.php';
 $q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC");
 ?>
 <!DOCTYPE html>
@@ -16,6 +16,15 @@ $q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC");
 <h1 class="judul">DATA GURU ATPH</h1>
 <p class="sub">AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</p>
 
+<?php if (isset($_GET['pesan'])): ?>
+<div style="max-width:900px;margin:0 auto 18px;padding:12px 16px;border-radius:10px;background:#e8f5e9;color:#1b5e20;font-weight:700;">
+<?= htmlspecialchars([
+'hapus_sukses'=>'Data guru berhasil dihapus.',
+'hapus_gagal'=>'Data guru gagal dihapus.',
+'tidak_ditemukan'=>'Data guru tidak ditemukan.'
+][$_GET['pesan']] ?? '') ?>
+</div>
+<?php endif; ?>
 <div class="wrap" id="wrap">
 <?php
 $no=0;

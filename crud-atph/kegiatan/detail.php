@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../config/koneksi.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $query = mysqli_query($koneksi, "SELECT * FROM kegiatan WHERE id_kegiatan = '$id'");

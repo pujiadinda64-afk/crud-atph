@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
-include '../koneksi.php';
+include 'config/koneksi.php';
 $is_logged_in = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>

@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../config/koneksi.php';
 $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DESC");
 ?>
 
@@ -279,6 +279,20 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
 <body>
 
 <div class="container">
+    <?php
+    $pesan = $_GET['pesan'] ?? '';
+    $messages = [
+        'hapus_sukses' => 'Kegiatan berhasil dihapus.',
+        'hapus_gagal' => 'Kegiatan gagal dihapus.',
+        'tidak_ditemukan' => 'Data kegiatan tidak ditemukan.'
+    ];
+    if (isset($messages[$pesan])):
+    ?>
+    <div style="margin-bottom:18px;padding:12px 16px;border-radius:10px;background:#e8f5e9;color:#1b5e20;font-weight:700;">
+        <?= htmlspecialchars($messages[$pesan]); ?>
+    </div>
+    <?php endif; ?>
+
     <a href="../index.php" class="btn btn-back">&larr; Kembali ke Dashboard</a>
     
     <div class="header">

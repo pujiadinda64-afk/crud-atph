@@ -1,20 +1,36 @@
 <?php
-include '../../koneksi.php';
+session_start();
+include '../config/koneksi.php';
 
+<<<<<<< HEAD
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    echo "<script>alert('Akses ditolak! Hanya admin yang dapat menambah data.'); window.location='index.php';</script>";
+    exit;
+}
+
+if (isset($_POST['simpan'])) {
+=======
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
     exit();
 }
 
 if (isset($_POST['submit'])) {
+>>>>>>> 1715ef8ad1ef01009636891237625cefb3e14a23
     $nama_kegiatan = $_POST['nama_kegiatan'];
     $deskripsi     = $_POST['deskripsi'];
     $pembimbing    = $_POST['pembimbing'];
     $tanggal       = $_POST['tanggal'];
 
+<<<<<<< HEAD
 // 1. Ubah bagian Upload Foto Utama ini:
     $foto_utama = time() . '_' . $_FILES['foto_utama']['name'];
     $tmp_utama  = $_FILES['foto_utama']['tmp_name'];
+=======
+    // Upload Foto Utama
+    $foto_utama = time() . '_' . $_FILES['foto']['name'];
+    $tmp_utama  = $_FILES['foto']['tmp_name'];
+>>>>>>> 7acdf25957c37f1cc9db6c94b50c47b7e25094a5
     move_uploaded_file($tmp_utama, 'uploads/' . $foto_utama);
 
     // 2. Dan pastikan bagian Query INSERT ini memakai variabel $foto_utama:

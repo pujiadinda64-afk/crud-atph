@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../koneksi.php'; // Sesuaikan path jika letaknya berbeda (misal: '../koneksi.php' jika di dalam subfolder)
+include 'config/koneksi.php'; // Sesuaikan path jika letaknya berbeda (misal: '../koneksi.php' jika di dalam subfolder)
 
 // Pastikan user sudah login
 if (!isset($_SESSION['user_id'])) {
