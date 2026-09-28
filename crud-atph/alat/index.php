@@ -63,7 +63,7 @@ $PALET = [
   ["#84CC16","#ECFCCB"],["#6366F1","#E0E7FF"],
 ];
 
-function renderIkon($alat, $ICONS) {
+function renderIkon($alat,$ICONS) {
     if (!empty($alat["foto"]) && file_exists("uploads/" . $alat["foto"])) {
         return '<img src="uploads/' . htmlspecialchars($alat["foto"]) . '" alt="' . htmlspecialchars($alat["nama_alat"]) . '" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
     }

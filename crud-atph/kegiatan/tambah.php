@@ -2,12 +2,21 @@
 session_start();
 include '../config/koneksi.php';
 
+<<<<<<< HEAD
 if (($_SESSION['role'] ?? '') !== 'admin') {
     echo "<script>alert('Akses ditolak! Hanya admin yang dapat menambah data.'); window.location='index.php';</script>";
     exit;
 }
 
 if (isset($_POST['simpan'])) {
+=======
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
+if (isset($_POST['submit'])) {
+>>>>>>> 1715ef8ad1ef01009636891237625cefb3e14a23
     $nama_kegiatan = $_POST['nama_kegiatan'];
     $deskripsi     = $_POST['deskripsi'];
     $pembimbing    = $_POST['pembimbing'];
