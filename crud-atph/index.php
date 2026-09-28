@@ -116,7 +116,7 @@ $is_logged_in = isset($_SESSION['user_id']);
       </div>
       <div class="contact-form-wrapper">
         <!-- Tambahkan action dan method di sini -->
-        <form action="https://formspree.io/f/mkjgvyzb" method="POST" class="contact-form">
+        <form action= "https://formspree.io/f/mgavpbev" method="POST" class="contact-form">
           <div class="form-row">
             <!-- Tambahkan attribute name="nama" dan name="email" -->
             <input type="text" name="nama" placeholder="Nama Anda" required>
