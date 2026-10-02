@@ -1,5 +1,5 @@
 <?php
-// Memanggil koneksi database (sesuaikan letak foldernya)
+// Memanggil koneksi database
 include '../../koneksi.php'; 
 
 $pesan_error = "";
@@ -7,53 +7,55 @@ $pesan_error = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama_kegiatan = trim($_POST['nama_kegiatan']);
     $deskripsi     = trim($_POST['deskripsi']);
+    $pembimbing    = trim($_POST['pembimbing']);
     $tanggal       = $_POST['tanggal'];
 
     if (empty($nama_kegiatan) || empty($tanggal)) {
         $pesan_error = "Nama kegiatan dan tanggal wajib diisi!";
     } else {
-        // 1. Upload Foto Utama
-        $nama_foto_utama = "";
-        if (isset($_FILES['foto_utama']) && $_FILES['foto_utama']['error'] === UPLOAD_ERR_OK) {
-            $file_tmp   = $_FILES['foto_utama']['tmp_name'];
-            $file_name  = $_FILES['foto_utama']['name'];
+        // 1. Upload Foto Utama (Cover)
+        $nama_foto = "";
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $file_tmp   = $_FILES['foto']['tmp_name'];
+            $file_name  = $_FILES['foto']['name'];
             $ekstensi   = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
             $allowed    = ['jpg', 'jpeg', 'png', 'webp'];
 
             if (in_array($ekstensi, $allowed)) {
-                $nama_foto_utama = time() . '_utama_' . uniqid() . '.' . $ekstensi;
+                $nama_foto = time() . '_' . uniqid() . '.' . $ekstensi;
                 if (!is_dir('uploads')) {
                     mkdir('uploads', 0777, true);
                 }
-                move_uploaded_file($file_tmp, 'uploads/' . $nama_foto_utama);
+                move_uploaded_file($file_tmp, 'uploads/' . $nama_foto);
             }
         }
 
         if (empty($pesan_error)) {
-            // Menggunakan $koneksi sesuai file koneksi.php kamu
-            $stmt = $koneksi->prepare("INSERT INTO kegiatan (nama_kegiatan, deskripsi, tanggal, foto_utama) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $nama_kegiatan, $deskripsi, $tanggal, $nama_foto_utama);
+            // SIMPAN KE TABEL KEGIATAN HANYA SEKALI
+            $stmt = $koneksi->prepare("INSERT INTO kegiatan (nama_kegiatan, deskripsi, pembimbing, tanggal, foto) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $nama_kegiatan, $deskripsi, $pembimbing, $tanggal, $nama_foto);
             
             if ($stmt->execute()) {
-                $kegiatan_id = $stmt->insert_id; 
+                $kegiatan_id = $stmt->insert_id; // Ambil ID kegiatan yang baru saja dibuat
                 $stmt->close();
 
-                // 2. Proses Upload Foto Tambahan (Multiple)
+                // 2. PROSES UPLOAD FOTO TAMBAHAN (MULTI)
                 if (isset($_FILES['foto_tambahan']) && !empty($_FILES['foto_tambahan']['name'][0])) {
                     $jumlah_file = count($_FILES['foto_tambahan']['name']);
 
                     for ($i = 0; $i < $jumlah_file; $i++) {
                         if ($_FILES['foto_tambahan']['error'][$i] === UPLOAD_ERR_OK) {
-                            $tmp_name = $_FILES['foto_tambahan']['tmp_name'][$i];
+                            $tmp_name  = $_FILES['foto_tambahan']['tmp_name'][$i];
                             $orig_name = $_FILES['foto_tambahan']['name'][$i];
-                            $ext = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
+                            $ext       = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
 
                             if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
                                 $nama_foto_tambah = time() . '_tambahan_' . $i . '_' . uniqid() . '.' . $ext;
                                 move_uploaded_file($tmp_name, 'uploads/' . $nama_foto_tambah);
 
-                                $stmt_foto = $koneksi->prepare("INSERT INTO foto_kegiatan (kegiatan_id, nama_file) VALUES (?, ?)");
-                                $stmt_foto->bind_param("is", $kegiatan_id, $nama_foto_tambah);
+                                // Masukkan ke tabel foto_kegiatan (mengisi id_kegiatan, nama_foto, dan nama_file sesuai struktur database kamu)
+                                $stmt_foto = $koneksi->prepare("INSERT INTO foto_kegiatan (id_kegiatan, nama_foto, nama_file) VALUES (?, ?, ?)");
+                                $stmt_foto->bind_param("iss", $id_kegiatan, $nama_foto_tambah, $nama_foto_tambah);
                                 $stmt_foto->execute();
                                 $stmt_foto->close();
                             }
@@ -119,13 +121,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <?php if (!empty($pesan_error)): ?>
-        <div class="alert"><?= htmlspecialchars($pesans_error ?? $pesan_error); ?></div>
+        <div class="alert"><?= htmlspecialchars($pesan_error); ?></div>
     <?php endif; ?>
 
     <form action="" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nama_kegiatan">Nama Kegiatan</label>
             <input type="text" id="nama_kegiatan" name="nama_kegiatan" placeholder="Contoh: Praktik Pemangkasan Tanaman" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pembimbing">Pembimbing</label>
+            <input type="text" id="pembimbing" name="pembimbing" placeholder="Contoh: Pak Sule / Bu Dera" required>
         </div>
 
         <div class="form-group">
@@ -139,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="form-group">
-            <label for="foto_utama">Foto Utama (Cover)</label>
+            <label for="foto">Foto Utama (Cover)</label>
             <div class="file-upload-box">
-                <input type="file" id="foto_utama" name="foto_utama" accept="image/*">
+                <input type="file" id="foto" name="foto" accept="image/*">
             </div>
             <div class="helper-text">Format: JPG, JPEG, PNG, WEBP.</div>
         </div>

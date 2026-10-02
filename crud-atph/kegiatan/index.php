@@ -279,19 +279,6 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
 <body>
 
 <div class="container">
-    <?php
-    $pesan = $_GET['pesan'] ?? '';
-    $messages = [
-        'hapus_sukses' => 'Kegiatan berhasil dihapus.',
-        'hapus_gagal' => 'Kegiatan gagal dihapus.',
-        'tidak_ditemukan' => 'Data kegiatan tidak ditemukan.'
-    ];
-    if (isset($messages[$pesan])):
-    ?>
-    <div style="margin-bottom:18px;padding:12px 16px;border-radius:10px;background:#e8f5e9;color:#1b5e20;font-weight:700;">
-        <?= htmlspecialchars($messages[$pesan]); ?>
-    </div>
-    <?php endif; ?>
 
     <a href="../index.php" class="btn btn-back">&larr; Kembali ke Dashboard</a>
     
@@ -366,5 +353,51 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
     }
 </script>
 
+<!-- Bagian bawah konten / tabel / daftar kegiatan kamu -->
+
+    <!-- TARUH KODE POPUPNYA DI SINI (tepat di atas </body>) -->
+    <?php if (isset($_GET['pesan'])): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toast = document.createElement("div");
+            
+            let pesanTeks = "Aksi berhasil dilakukan!";
+            if ("<?= $_GET['pesan'] ?>" === "hapus_sukses") {
+                pesanTeks = "Kegiatan berhasil dihapus!";
+            } else if ("<?= $_GET['pesan'] ?>" === "tambah_sukses") {
+                pesanTeks = "Data kegiatan berhasil ditambahkan!";
+            }
+
+            toast.innerText = pesanTeks;
+            
+            toast.style.position = "fixed";
+            toast.style.top = "20px";
+            toast.style.right = "20px";
+            toast.style.backgroundColor = "#10b981";
+            toast.style.color = "white";
+            toast.style.padding = "12px 20px";
+            toast.style.borderRadius = "8px";
+            toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+            toast.style.zIndex = "9999";
+            toast.style.fontWeight = "600";
+            toast.style.fontSize = "14px";
+            toast.style.transition = "opacity 0.5s ease";
+
+            document.body.appendChild(toast);
+
+            setTimeout(function() {
+                toast.style.opacity = "0";
+                setTimeout(function() {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+
+            if (window.history.replaceState) {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+            }
+        });
+    </script>
+    <?php endif; ?>
 </body>
 </html>
