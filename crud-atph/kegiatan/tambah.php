@@ -21,6 +21,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ekstensi   = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
             $allowed    = ['jpg', 'jpeg', 'png', 'webp'];
 
+session_start();
+include '../config/koneksi.php';
+
+
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    echo "<script>alert('Akses ditolak! Hanya admin yang dapat menambah data.'); window.location='index.php';</script>";
+    exit;
+}
+
+if (isset($_POST['simpan'])) {
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
+if (isset($_POST['submit'])) {
+
+    $nama_kegiatan = $_POST['nama_kegiatan'];
+    $deskripsi     = $_POST['deskripsi'];
+    $pembimbing    = $_POST['pembimbing'];
+    $tanggal       = $_POST['tanggal'];
+
+    // Upload Foto Utama
+    $foto_utama = time() . '_' . $_FILES['foto']['name'];
+    $tmp_utama  = $_FILES['foto']['tmp_name'];
+    move_uploaded_file($tmp_utama, 'uploads/' . $foto_utama);
+
+
             if (in_array($ekstensi, $allowed)) {
                 $nama_foto = time() . '_' . uniqid() . '.' . $ekstensi;
                 if (!is_dir('uploads')) {
