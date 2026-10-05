@@ -1,193 +1,124 @@
 <?php
-session_start();
-include '../config/koneksi.php';
+session_start(); // Wajib ada untuk membaca data login
 
-<<<<<<< HEAD
-if (($_SESSION['role'] ?? '') !== 'admin') {
-    echo "<script>alert('Akses ditolak! Hanya admin yang dapat menambah data.'); window.location='index.php';</script>";
-    exit;
-}
-
-if (isset($_POST['simpan'])) {
-=======
+// Cek apakah yang mengakses adalah admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    echo "<script>alert('Akses ditolak! Fitur tambah data khusus untuk Admin.'); window.location='index.php';</script>";
     exit();
 }
 
-if (isset($_POST['submit'])) {
->>>>>>> 1715ef8ad1ef01009636891237625cefb3e14a23
-    $nama_kegiatan = $_POST['nama_kegiatan'];
-    $deskripsi     = $_POST['deskripsi'];
-    $pembimbing    = $_POST['pembimbing'];
-    $tanggal       = $_POST['tanggal'];
+include '../config/koneksi.php';
+if(isset($_POST['simpan'])){
+  $nama_kegiatan = $_POST['nama_kegiatan']; 
+  $deskripsi     = $_POST['deskripsi']; 
+  $pembimbing    = $_POST['pembimbing']; 
+  $tanggal       = $_POST['tanggal'];
+  
+  // Upload Foto Utama
+  $foto = $_FILES['foto']['name']; 
+  $tmp  = $_FILES['foto']['tmp_name'];
+  $foto_baru = "";
+  if($foto){ 
+      $foto_baru = time()."_".$foto; 
+      move_uploaded_file($tmp, "uploads/".$foto_baru); 
+  }
+  
+  // Simpan data utama ke tabel kegiatan
+  mysqli_query($koneksi, "INSERT INTO kegiatan (nama_kegiatan, deskripsi, pembimbing, tanggal, foto) VALUES ('$nama_kegiatan', '$deskripsi', '$pembimbing', '$tanggal', '$foto_baru')");
+  
+  // Ambil ID kegiatan yang baru saja dimasukkan
+  $id_kegiatan_baru = mysqli_insert_id($koneksi);
 
-    // Upload Foto Utama
-    $foto_utama = time() . '_' . $_FILES['foto']['name'];
-    $tmp_utama  = $_FILES['foto']['tmp_name'];
-    move_uploaded_file($tmp_utama, 'uploads/' . $foto_utama);
+  // Upload Foto Tambahan (Galeri) disesuaikan dengan kolom 'nama_foto' di detail.php
+  if(isset($_FILES['foto_tambahan'])) {
+      foreach($_FILES['foto_tambahan']['name'] as $key => $val){
+          if($val){
+              $nama_file_tambahan = time()."_".$val;
+              $tmp_tambahan = $_FILES['foto_tambahan']['tmp_name'][$key];
+              move_uploaded_file($tmp_tambahan, "uploads/".$nama_file_tambahan);
+              
+              // Kolom menggunakan 'nama_foto' agar cocok dengan detail.php
+              mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto) VALUES ('$id_kegiatan_baru', '$nama_file_tambahan')");
+          }
+      }
+  }
 
-    // Simpan Data Utama Kegiatan
-    $query = "INSERT INTO kegiatan (nama_kegiatan, deskripsi, pembimbing, tanggal, foto) 
-              VALUES ('$nama_kegiatan', '$deskripsi', '$pembimbing', '$tanggal', '$foto_utama')";
-    mysqli_query($koneksi, $query);
-    
-    // Ambil ID Kegiatan yang Baru Dibuat
-    $id_kegiatan_baru = mysqli_insert_id($koneksi);
-
-    // Upload Banyak Foto Tambahan
-    if (!empty($_FILES['foto_tambahan']['name'][0])) {
-        foreach ($_FILES['foto_tambahan']['name'] as $key => $val) {
-            $nama_file  = time() . '_' . $_FILES['foto_tambahan']['name'][$key];
-            $tmp_file   = $_FILES['foto_tambahan']['tmp_name'][$key];
-            $keterangan = $_POST['keterangan_foto'][$key] ?? '';
-
-            if (move_uploaded_file($tmp_file, 'uploads/' . $nama_file)) {
-                mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto, keterangan) VALUES ('$id_kegiatan_baru', '$nama_file', '$keterangan')");
-            }
-        }
-    }
-
-    header("Location: index.php");
-    exit();
+  header("location:index.php"); 
+  exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Tambah Kegiatan - ATPH</title>
-    
-    <!-- CSS-nya ditaruh langsung di sini biar pasti terbaca -->
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: url('../../img/latar.jpg') no-repeat center center fixed; /* Ganti dengan path foto background kamu */
-            background-size: cover;
-            color: #334155; 
-            margin: 0; 
-            padding: 30px 20px; 
-            min-height: 100vh; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tambah Kegiatan - ATPH</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+body{min-height:100vh;background:linear-gradient(135deg, #f4f9f4 0%, #fcf5ee 100%);display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow-x:hidden}
 
-        /* Kotak Card Utama di Tengah */
-        .card-form {
-            max-width: 650px;
-            margin: 40px auto;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 35px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
+/* Efek gradasi warna daun & pastel di pojok-pojok agar tidak terlalu polos */
+body::before{content:'';position:absolute;top:-50px;left:-50px;width:350px;height:350px;background:radial-gradient(circle, rgba(72,187,120,0.22) 0%, transparent 70%);z-index:0}
+body::after{content:'';position:absolute;bottom:-50px;right:-50px;width:400px;height:400px;background:radial-gradient(circle, rgba(221,107,32,0.12) 0%, transparent 70%);z-index:0}
 
-        h2 {
-            color: #1e3a2f;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 24px;
-        }
+.card{position:relative;z-index:1;width:100%;max-width:480px;background:rgba(255, 255, 255, 0.9);backdrop-filter:blur(10px);border:1px solid rgba(72,187,120,0.2);border-radius:24px;padding:36px 32px;box-shadow:0 20px 40px rgba(0,0,0,0.06)}
 
-        label {
-            font-weight: 600;
-            color: #1e293b;
-            font-size: 14px;
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 6px;
-        }
+.card h2{color:#2d3748;font-size:22px;font-weight:800;margin-bottom:4px}
+.card .sub{color:#48bb78;font-size:12px;font-weight:700;margin-bottom:28px;text-transform:uppercase;letter-spacing:0.8px}
 
-        input[type="text"],
-        input[type="date"],
-        input[type="file"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            font-size: 14px;
-            background-color: #ffffff;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
+label{display:block;color:#2d3748;font-size:12px;font-weight:700;margin:16px 0 8px 2px;letter-spacing:0.5px}
+label i{margin-right:6px;color:#48bb78}
 
-        input:focus, textarea:focus {
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
-            outline: none;
-        }
+input[type=text], input[type=date], textarea{width:100%;padding:13px 16px;border-radius:12px;border:1px solid #cbd5e0;background:#ffffff;color:#2d3748;outline:none;font-size:14px;transition:all 0.3s}
+input[type=text]:focus, input[type=date]:focus, textarea:focus{border-color:#48bb78;box-shadow:0 0 0 3px rgba(72,187,120,0.2)}
 
-        textarea {
-            resize: vertical;
-            height: 100px;
-        }
+textarea{resize:vertical;height:90px}
 
-        .btn-container {
-            margin-top: 25px;
-        }
+.file-box{width:100%;padding:10px 14px;border-radius:12px;border:1px solid #cbd5e0;background:#ffffff;font-size:13px;color:#718096;margin-bottom:4px}
 
-        button[type="submit"], input[type="submit"] {
-            background-color: #2e7d32;
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-right: 10px;
-        }
+.btn-group{display:flex;gap:12px;margin-top:28px}
+.btn-simpan{flex:1;padding:14px;background:#48bb78;color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(72,187,120,0.3);transition:all 0.2s}
+.btn-simpan:hover{background:#38a169}
 
-        button[type="submit"]:hover, input[type="submit"]:hover {
-            background-color: #1b4332;
-        }
-
-        button[type="reset"], input[type="reset"] {
-            background-color: #ef4444;
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        button[type="reset"]:hover {
-            background-color: #dc2626;
-        }
-    </style>
+.batal{flex:1;display:flex;align-items:center;justify-content:center;padding:14px;background:#e53e3e;color:#fff;text-decoration:none;border-radius:12px;font-weight:700;font-size:14px;box-shadow:0 4px 12px rgba(229,62,62,0.3);transition:all 0.2s}
+.batal:hover{background:#c53030}
+</style>
 </head>
 <body>
-
-    <!-- Pembungkus Card Form -->
-    <div class="card-form">
-        <h2>🌱 Tambah Kegiatan Pembelajaran</h2>
-        
-        <form action="" method="POST" enctype="multipart/form-data">
-            <label>Nama Kegiatan</label>
-            <input type="text" name="nama_kegiatan" required>
-
-            <label>Deskripsi Kegiatan</label>
-            <textarea name="deskripsi" required></textarea>
-
-            <label>Pembimbing</label>
-            <input type="text" name="pembimbing" required>
-
-            <label>Tanggal</label>
-            <input type="date" name="tanggal" required>
-
-            <label>Foto Utama (Cover)</label>
-            <input type="file" name="foto" required>
-
-            <div class="btn-container">
-                <button type="submit" name="simpan">Simpan</button>
-                <button type="reset">Reset</button>
-            </div>
-        </form>
+<div class="card">
+  <h2>Tambah Kegiatan</h2>
+  <div class="sub">Agribisnis Tanaman Pangan & Hortikultura</div>
+  
+  <form method="post" enctype="multipart/form-data">
+    <label><i class="fa-solid fa-clipboard-list"></i> Nama Kegiatan</label>
+    <input type="text" name="nama_kegiatan" placeholder="Masukkan nama kegiatan..." required>
+    
+    <label><i class="fa-solid fa-align-left"></i> Deskripsi</label>
+    <textarea name="deskripsi" placeholder="Tuliskan deskripsi kegiatan..." required></textarea>
+    
+    <label><i class="fa-solid fa-user-tie"></i> Pembimbing</label>
+    <input type="text" name="pembimbing" placeholder="Nama guru pembimbing..." required>
+    
+    <label><i class="fa-solid fa-calendar-days"></i> Tanggal</label>
+    <input type="date" name="tanggal" required>
+    
+    <label><i class="fa-solid fa-image"></i> Foto Utama Kegiatan</label>
+    <div class="file-box">
+        <input type="file" name="foto" required>
     </div>
-
+    
+    <label><i class="fa-solid fa-images"></i> Galeri Dokumentasi Tambahan (Bisa pilih banyak)</label>
+    <div class="file-box">
+        <input type="file" name="foto_tambahan[]" multiple>
+    </div>
+    
+    <div class="btn-group">
+      <button type="submit" name="simpan" class="btn-simpan">Simpan</button>
+      <a href="index.php" class="batal">Batal</a>
+    </div>
+  </form>
+</div>
 </body>
 </html>
