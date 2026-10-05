@@ -22,11 +22,10 @@ if (isset($_POST['login'])) {
             exit();
         }
 
-        // Redirect sesuai role jika profil sudah lengkap
-        if ($user['role'] == 'admin') {
-            header("Location: admin/index.php"); // Atau dashboard admin
+      if ($user['role'] == 'admin') {
+            header("Location: admin/index.php"); // Masuk ke folder admin
         } else {
-            header("Location: index.php"); // Ke halaman utama siswa
+            header("Location: siswa/index.php"); // <--- UBAH INI: Masuk ke folder siswa
         }
         exit();
     } else {
