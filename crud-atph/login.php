@@ -24,7 +24,7 @@ if (isset($_POST['login'])) {
 
         // Redirect sesuai role jika profil sudah lengkap
         if ($user['role'] == 'admin') {
-            header("Location: index.php"); // Atau dashboard admin
+            header("Location: admin/index.php"); // Atau dashboard admin
         } else {
             header("Location: index.php"); // Ke halaman utama siswa
         }
