@@ -33,7 +33,7 @@ if (isset($_POST['simpan_profil'])) {
         // Perbarui session nama lengkap
         $_SESSION['nama_lengkap'] = $nama_lengkap;
         
-        echo "<script>alert('Profil berhasil dilengkapi!'); window.location='index.php';</script>";
+        echo "<script>alert('Profil berhasil dilengkapi!'); window.location='siswa/index.php';</script>";
         exit();
     } else {
         $error = "Gagal menyimpan profil, coba lagi.";

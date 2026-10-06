@@ -17,7 +17,6 @@ body {
   padding: 0 20px;
 }
 
-/
 
 .nav-links a:hover, .nav-links a.active {
   color: #a7f3d0;
@@ -468,12 +467,6 @@ body {
   font-size: 12px;
   color: #94a3b8;
 }
-  font-size: 15px;
-  font-weight: 600;
-  color: #1e293b;
-  width: 100%;
-  background: transparent;
-}
 
 .btn-search-submit {
   background: linear-gradient(135deg, #1b5e3b, #2d6a4f);
@@ -534,7 +527,6 @@ body {
   margin-top: 15px !important;
 }
 
-.badge {
  
 
 /* --- 3. MENU DATA (INTERACTIVE CARDS) --- */
@@ -689,8 +681,6 @@ body {
   transform: translateX(4px);
 }
 
-//* --- SECTION KONTAK --- */
-/* --- SECTION KONTAK --- */
 #kontak {
   max-width: 1200px;
   margin: 60px auto;

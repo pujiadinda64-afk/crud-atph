@@ -5,6 +5,7 @@ include 'config/koneksi.php';
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $_SESSION['nama_lengkap'] = $data['nama_lengkap']; 
 
     $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username = '$username'");
     $user  = mysqli_fetch_assoc($query);
