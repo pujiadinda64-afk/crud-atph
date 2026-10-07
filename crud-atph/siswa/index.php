@@ -2,18 +2,28 @@
 session_start();
 include '../config/koneksi.php';
 
-// Proteksi Halaman: Hanya Siswa yang bisa akses
-// Sesuaikan jalur ke login.php jika file login.php ada di luar folder siswa (root)
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
-    header("Location: ../login.php");
-    exit();
-}
-?>
+$user_id = $_SESSION['user_id'];
 
-<?php
-// Pastikan session sudah dimulai jika menggunakan login session
-// session_start();
+// Ambil data user yang sedang login
+$query_user = mysqli_query($koneksi, "SELECT * FROM users WHERE id_user = '$user_id'");
+$data_user = mysqli_fetch_assoc($query_user);
+
+$nama_lengkap = $data_user['nama_lengkap'] ?? 'Siswa ATPH';
+$kelas = $data_user['kelas'] ?? 'XI - ATPH 1';
+$poin = $data_user['poin'] ?? 0;
+
+// Query leaderboard (otomatis mengambil data siswa diurutkan dari poin terbanyak)
+$query_leaderboard = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 'siswa' ORDER BY poin DESC LIMIT 3");
 ?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- Tag HTML, CSS, dsb -->
+</head>
+<body>
+    <!-- Isi Website / Dashboard -->
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -450,8 +460,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
         <div class="sidebar-brand">
             <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
             <div>
-                <h1>Portal ATPH</h1>
-                <p>SMK Pertanian Unggul</p>
+                <h1>Profil Siswa</h1>
+                <p>ATPH</p>
             </div>
         </div>
         <div class="sidebar-menu">
@@ -467,8 +477,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
                 <div class="user-info">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="User">
                     <div>
-                        <div class="name"><?= htmlspecialchars($_SESSION['username'] ?? 'Siswa ATPH'); ?></div>
-                        <div class="role">Kelas XI - ATPH 1</div>
+                        <div class="name"><?= htmlspecialchars($_SESSION['nama_lengkap'] ?? 'kelas'); ?></div>
+                        <div class="role">kelas</div>
                     </div>
                 </div>
                 <a href="../logout.php" title="Keluar" style="color: #dc2626;"><i class="fa-solid fa-right-from-bracket"></i></a>
@@ -486,10 +496,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
             </div>
             <div class="top-stats">
                 <div class="badge-stat">
-                    <i class="fa-solid fa-seedling"></i> Praktik Lapang: 12/15 Jam
+                    <i class="fa-solid fa-seedling"></i> Praktik Lapang: 9/12 Jam
                 </div>
+                <!-- Badge Poin di Top Bar Header -->
                 <div class="badge-stat warning">
-                    <i class="fa-solid fa-star"></i> 750 Poin Kinerja
+                    <i class="fa-solid fa-star"></i> <?= $poin; ?> Poin Kinerja
                 </div>
                 <a href="../logout.php" class="btn-keluar">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
@@ -503,7 +514,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
                 <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
                     <i class="fa-solid fa-sun"></i> Sesi Pembelajaran Aktif • Musim Tanam Hortikultura
                 </span>
-                <h2 style="margin-top: 10px;">Selamat pagi, <?= htmlspecialchars($_SESSION['username'] ?? 'Siswa'); ?>! 🌱</h2>
+                <h2 style="margin-top: 10px;">Selamat pagi, <?= htmlspecialchars($_SESSION['nama_lengkap'] ?? 'Siswa'); ?>! 🌱</h2>
                 <p>Satu langkah lebih dekat menuju petani milenial profesional. Jangan lupa isi jurnal harian dan cek jadwal pengolahan lahan hari ini.</p>
                 <a href="../peminjaman/tambah.php" class="btn-banner">
                     Mulai Aktivitas <i class="fa-solid fa-arrow-right"></i>
@@ -562,7 +573,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
                             <h4>Jurnal Praktikum</h4>
                             <p>Kirimkan laporan pengamatan tanaman harianmu.</p>
                         </div>
-                        <a href="upload-laporan.php">Kirim Laporan &rarr;</a>
+                        <a href="jurnal.php">Kirim Laporan &rarr;</a>
                     </div>
 
                     <!-- Riwayat Pinjam -->
@@ -578,51 +589,84 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'siswa') {
                 </div>
             </div>
 
-            <!-- Kolom Samping: Leaderboard Praktik -->
+ <!-- Kolom Samping: Leaderboard Praktik -->
+<div>
+    <div class="side-panel">
+        <h4>
+            <span>Leaderboard Praktik</span>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Minggu Ini</span>
+        </h4>
+        
+       <?php 
+// Cek apakah ada data siswa di database
+if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
+    while ($row = mysqli_fetch_assoc($query_leaderboard)) {
+        // Tentukan apakah baris ini adalah user yang sedang login
+        $is_me = (isset($_SESSION['id_user']) && $row['id_user'] == $_SESSION['id_user']);
+        
+        // Format nama: jika user yang login, tambahkan label "(Kamu)"
+        $nama_tampil = htmlspecialchars($row['nama_lengkap'] ?? 'Siswa');
+        if ($is_me) {
+            $nama_tampil .= " (Kamu)";
+        }
+        
+        // Cek apakah user punya foto profil, jika tidak pakai UI-Avatars otomatis
+        if (!empty($row['foto']) && file_exists("../uploads/" . $row['foto'])) {
+            $path_foto = "../uploads/" . $row['foto'];
+        } else {
+            // Pakai nama asli (tanpa label 'Kamu') agar inisial avatarnya bersih
+            $path_foto = "https://ui-avatars.com/api/?name=" . urlencode($row['nama_lengkap']) . "&background=10b981&color=fff&size=128";
+        }
+    }
+}
+?>  
+    <!-- KOTAK LEADERBOARD ITEM -->
+    <div class="leaderboard-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <div class="leaderboard-user" style="display: flex; align-items: center; gap: 10px;">
+            <!-- TAG IMG UNTUK MENAMPILKAN FOTO -->
+            <img src="<?php echo $path_foto; ?>" alt="<?php echo $nama_tampil; ?>" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
             <div>
-                <div class="side-panel">
-                    <h4>
-                        <span>Leaderboard Praktik</span>
-                        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Minggu Ini</span>
-                    </h4>
-                    
-                    <div class="leaderboard-item">
-                        <div class="leaderboard-user">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Budi">
-                            <div>
-                                <div class="name">Budi Santoso</div>
-                                <div class="class">XI ATPH 2</div>
-                            </div>
-                        </div>
-                        <div class="score-badge">920 Poin</div>
-                    </div>
-
-                    <div class="leaderboard-item">
-                        <div class="leaderboard-user">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Siti">
-                            <div>
-                                <div class="name"><?= htmlspecialchars($_SESSION['username'] ?? 'Siti Aminah'); ?> (Kamu)</div>
-                                <div class="class">XI ATPH 1</div>
-                            </div>
-                        </div>
-                        <div class="score-badge">750 Poin</div>
-                    </div>
-
-                    <div class="leaderboard-item">
-                        <div class="leaderboard-user">
-                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" alt="Rian">
-                            <div>
-                                <div class="name">Rian Hidayat</div>
-                                <div class="class">XI ATPH 1</div>
-                            </div>
-                        </div>
-                        <div class="score-badge">680 Poin</div>
-                    </div>
-
+                <div class="name" style="font-weight: bold;"><?php echo $nama_tampil; ?></div>
+                <div class="class" style="font-size: 12px; color: gray;"><?php echo htmlspecialchars($row['kelas'] ?? '-'); ?></div>
+            </div>
+        </div>
+        <div class="score-badge" style="font-weight: bold; color: #10b981;"><?php echo $row['poin'] ?? 0; ?> Poin</div>
+    </div>
+   <?php 
+// Pastikan query leaderboard dipanggil langsung tanpa fetch di atasnya
+if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
+    while ($row = mysqli_fetch_assoc($query_leaderboard)) {
+        $is_me = (isset($_SESSION['id_user']) && $row['id_user'] == $_SESSION['id_user']);
+        $nama_tampil = htmlspecialchars($row['nama_lengkap'] ?? 'Siswa');
+        if ($is_me) { 
+            $nama_tampil .= " (Kamu)"; 
+        }
+        
+        // Cek foto profil atau gunakan UI-Avatars otomatis
+        if (!empty($row['foto']) && file_exists("../uploads/" . $row['foto'])) {
+            $avatar = "../uploads/" . $row['foto'];
+        } else {
+            $avatar = "https://ui-avatars.com/api/?name=" . urlencode($row['nama_lengkap']) . "&background=10b981&color=fff&size=128";
+        }
+?>
+        <div class="leaderboard-item">
+            <div class="leaderboard-user">
+                <img src="<?php echo $avatar; ?>" alt="<?php echo $nama_tampil; ?>">
+                <div>
+                    <div class="name"><?php echo $nama_tampil; ?></div>
+                    <div class="class"><?php echo htmlspecialchars($row['kelas'] ?? '-'); ?></div>
                 </div>
             </div>
-
+            <div class="score-badge"><?php echo $row['poin'] ?? 0; ?> Poin</div>
         </div>
+<?php 
+    } // Penutup while
+} else { 
+    echo "<p style='font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;'>Belum ada data siswa.</p>";
+} 
+?>
+    </div>
+</div>
     </main>
 
 </body>

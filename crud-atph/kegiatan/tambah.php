@@ -1,9 +1,9 @@
 <?php
 session_start(); // Wajib ada untuk membaca data login
 
-// Cek apakah yang mengakses adalah admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Fitur tambah data khusus untuk Admin.'); window.location='index.php';</script>";
+// Cek apakah yang mengakses adalah admin ATAU siswa
+if (!isset($_SESSION['role']) || ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'siswa')) {
+    echo "<script>alert('Akses ditolak! Silakan login terlebih dahulu.'); window.location='login.php';</script>";
     exit();
 }
 

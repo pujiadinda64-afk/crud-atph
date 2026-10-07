@@ -29,10 +29,11 @@ if (isset($_POST['simpan_profil'])) {
         $update = mysqli_query($koneksi, "UPDATE users SET nama_lengkap = '$nama_lengkap', email = '$email' WHERE id_user = '$user_id'");
     }
 
-    if ($update) {
-        // Perbarui session nama lengkap
+   if ($update) {
+        // Perbarui session nama lengkap juga (opsional untuk jaga-jaga)
         $_SESSION['nama_lengkap'] = $nama_lengkap;
         
+        // Karena file proses ada di luar dan tujuan ada di dalam folder siswa, arahkan ke:
         echo "<script>alert('Profil berhasil dilengkapi!'); window.location='siswa/index.php';</script>";
         exit();
     } else {
@@ -67,26 +68,33 @@ if (isset($_POST['simpan_profil'])) {
         <p style="color: red; font-size: 13px; text-align: center;"><?= $error; ?></p>
     <?php endif; ?>
 
-    <form method="POST" action="">
-        <div class="form-group">
-            <label>Nama Lengkap</label>
-            <input type="text" name="nama_lengkap" required value="<?= htmlspecialchars($user['nama_lengkap'] ?? ''); ?>" placeholder="Masukkan nama lengkap">
+    <!-- FORM UTAMA MENCAKUP SEMUA INPUT -->
+    <form action="proses_profil.php" method="POST" enctype="multipart/form-data">
+        
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Nama Lengkap</label><br>
+            <input type="text" name="nama_lengkap" value="<?php echo $data_user['nama_lengkap'] ?? ''; ?>" style="width: 100%; padding: 8px;">
         </div>
 
-        <div class="form-group">
-            <label>Gmail Valid</label>
-            <!-- Menggunakan type="email" agar tervalidasi otomatis oleh browser -->
-            <input type="email" name="email" required value="<?= htmlspecialchars($user['email'] ?? ''); ?>" placeholder="contoh@gmail.com">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Gmail Valid</label><br>
+            <input type="email" name="email" value="<?php echo $data_user['email'] ?? ''; ?>" style="width: 100%; padding: 8px;">
         </div>
 
-        <?php if ($role == 'siswa'): ?>
-            <div class="form-group">
-                <label>Kelas</label>
-                <input type="text" name="kelas" required value="<?= htmlspecialchars($user['kelas'] ?? ''); ?>" placeholder="Contoh: XII ATPH 1">
-            </div>
-        <?php endif; ?>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Ganti Foto Profil (JPG/PNG):</label><br>
+            <input type="file" name="foto" accept="image/*" style="margin-top: 5px;">
+            <small style="color: gray; display: block; margin-top: 3px;">*Kosongkan jika tidak ingin mengganti foto.</small>
+        </div>
 
-        <button type="submit" name="simpan_profil" class="btn-submit">Simpan & Lanjutkan</button>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label>Kelas</label><br>
+            <input type="text" name="kelas" value="<?php echo $data_user['kelas'] ?? ''; ?>" style="width: 100%; padding: 8px;">
+        </div>
+
+        <!-- Tombol Simpan Utama di Bawah -->
+        <button type="submit" name="simpan_profil" class="btn-primary" style="width: 100%; padding: 10px; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer;">Simpan & Lanjutkan</button>
+    
     </form>
 </div>
 
