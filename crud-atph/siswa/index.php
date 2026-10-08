@@ -12,18 +12,7 @@ $nama_lengkap = $data_user['nama_lengkap'] ?? 'Siswa ATPH';
 $kelas = $data_user['kelas'] ?? 'XI - ATPH 1';
 $poin = $data_user['poin'] ?? 0;
 
-// Query leaderboard (otomatis mengambil data siswa diurutkan dari poin terbanyak)
-$query_leaderboard = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 'siswa' ORDER BY poin DESC LIMIT 3");
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <!-- Tag HTML, CSS, dsb -->
-</head>
-<body>
-    <!-- Isi Website / Dashboard -->
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -472,15 +461,25 @@ $query_leaderboard = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 's
             <a href="upload-laporan.php" class="nav-item"><i class="fa-solid fa-book"></i> Jurnal Praktikum</a>
             <a href="riwayat.php" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pinjam</a>
         </div>
-        <div class="sidebar-footer">
-            <div class="user-profile-mini">
-                <div class="user-info">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="User">
-                    <div>
-                        <div class="name"><?= htmlspecialchars($_SESSION['nama_lengkap'] ?? 'kelas'); ?></div>
-                        <div class="role">kelas</div>
-                    </div>
-                </div>
+    <div class="sidebar-footer">
+   <div class="sidebar-footer">
+    <div class="user-profile-mini">
+        <div class="user-info">
+            <?php 
+                $nama_tampil = $data_user['nama_lengkap'] ?? $_SESSION['nama_lengkap'] ?? 'Siswa';
+                $kelas_tampil = $data_user['kelas'] ?? 'Siswa ATPH';
+                
+                // Langsung pakai avatar inisial otomatis dari UI-Avatars
+                $avatar_inisial = "https://ui-avatars.com/api/?name=" . urlencode($nama_tampil) . "&background=10b981&color=fff&size=128";
+            ?>
+            <img src="<?php echo $avatar_inisial; ?>" alt="Avatar">
+            <div>
+                <div class="name"><?php echo htmlspecialchars($nama_tampil); ?></div>
+                <div class="role"><?php echo htmlspecialchars($kelas_tampil); ?></div>
+            </div>
+        </div>
+    </div>
+</div>
                 <a href="../logout.php" title="Keluar" style="color: #dc2626;"><i class="fa-solid fa-right-from-bracket"></i></a>
             </div>
         </div>
@@ -596,45 +595,14 @@ $query_leaderboard = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 's
             <span>Leaderboard Praktik</span>
             <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Minggu Ini</span>
         </h4>
-        
-       <?php 
-// Cek apakah ada data siswa di database
-if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
-    while ($row = mysqli_fetch_assoc($query_leaderboard)) {
-        // Tentukan apakah baris ini adalah user yang sedang login
-        $is_me = (isset($_SESSION['id_user']) && $row['id_user'] == $_SESSION['id_user']);
-        
-        // Format nama: jika user yang login, tambahkan label "(Kamu)"
-        $nama_tampil = htmlspecialchars($row['nama_lengkap'] ?? 'Siswa');
-        if ($is_me) {
-            $nama_tampil .= " (Kamu)";
-        }
-        
-        // Cek apakah user punya foto profil, jika tidak pakai UI-Avatars otomatis
-        if (!empty($row['foto']) && file_exists("../uploads/" . $row['foto'])) {
-            $path_foto = "../uploads/" . $row['foto'];
-        } else {
-            // Pakai nama asli (tanpa label 'Kamu') agar inisial avatarnya bersih
-            $path_foto = "https://ui-avatars.com/api/?name=" . urlencode($row['nama_lengkap']) . "&background=10b981&color=fff&size=128";
-        }
-    }
-}
-?>  
-    <!-- KOTAK LEADERBOARD ITEM -->
-    <div class="leaderboard-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <div class="leaderboard-user" style="display: flex; align-items: center; gap: 10px;">
-            <!-- TAG IMG UNTUK MENAMPILKAN FOTO -->
-            <img src="<?php echo $path_foto; ?>" alt="<?php echo $nama_tampil; ?>" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-            <div>
-                <div class="name" style="font-weight: bold;"><?php echo $nama_tampil; ?></div>
-                <div class="class" style="font-size: 12px; color: gray;"><?php echo htmlspecialchars($row['kelas'] ?? '-'); ?></div>
-            </div>
-        </div>
-        <div class="score-badge" style="font-weight: bold; color: #10b981;"><?php echo $row['poin'] ?? 0; ?> Poin</div>
-    </div>
-   <?php 
-// Pastikan query leaderboard dipanggil langsung tanpa fetch di atasnya
-if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
+
+        <div class="leaderboard-widget"> <!-- Atau wadah aslinya -->
+  <?php 
+// 1. Ambil data dengan query yang sudah benar terurut dari poin terbesar
+$query_leaderboard = mysqli_query($koneksi, "SELECT * FROM users WHERE role = 'siswa' ORDER BY poin DESC LIMIT 3");
+
+// 2. Lakukan perulangan while murni tanpa di-fetch duluan di atas
+if (mysqli_num_rows($query_leaderboard) > 0) {
     while ($row = mysqli_fetch_assoc($query_leaderboard)) {
         $is_me = (isset($_SESSION['id_user']) && $row['id_user'] == $_SESSION['id_user']);
         $nama_tampil = htmlspecialchars($row['nama_lengkap'] ?? 'Siswa');
@@ -642,13 +610,13 @@ if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
             $nama_tampil .= " (Kamu)"; 
         }
         
-        // Cek foto profil atau gunakan UI-Avatars otomatis
         if (!empty($row['foto']) && file_exists("../uploads/" . $row['foto'])) {
             $avatar = "../uploads/" . $row['foto'];
         } else {
             $avatar = "https://ui-avatars.com/api/?name=" . urlencode($row['nama_lengkap']) . "&background=10b981&color=fff&size=128";
         }
 ?>
+        <!-- Kotak item leaderboard ini akan melukis data sesuai urutan database -->
         <div class="leaderboard-item">
             <div class="leaderboard-user">
                 <img src="<?php echo $avatar; ?>" alt="<?php echo $nama_tampil; ?>">
@@ -660,9 +628,9 @@ if (isset($query_leaderboard) && mysqli_num_rows($query_leaderboard) > 0) {
             <div class="score-badge"><?php echo $row['poin'] ?? 0; ?> Poin</div>
         </div>
 <?php 
-    } // Penutup while
+    } 
 } else { 
-    echo "<p style='font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;'>Belum ada data siswa.</p>";
+    echo "<p style='font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;'>Belum ada data.</p>";
 } 
 ?>
     </div>
