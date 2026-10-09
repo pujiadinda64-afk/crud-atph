@@ -137,7 +137,7 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
 
     <div class="header">
         <h1><i class="fa-solid fa-handshake-angle"></i> Konfirmasi Peminjaman Alat</h1>
-        <a href="../admin/index.php" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+        <a href="../admin/index.php" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman admin</a>
     </div>
 
     <div class="container">

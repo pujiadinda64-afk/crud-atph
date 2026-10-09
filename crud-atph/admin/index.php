@@ -189,6 +189,7 @@ $total_peminjaman = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM peminj
             <li><a href="../alat/index.php"><i class="fa-solid fa-toolbox"></i> Data Alat</a></li>
             <li><a href="../peminjaman/index.php"><i class="fa-solid fa-handshake-angle"></i> Peminjaman</a></li>
             <li><a href="../jadwal/index.php"><i class="fa-solid fa-calendar-days"></i> Jadwal Lahan</a></li>
+            <li><a href="../jurnal/index.php"><i class="fa-solid fa-book-open"></i> Jurnal Harian</a></li>
         </ul>
         <div class="sidebar-footer">
             <a href="../logout.php" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
