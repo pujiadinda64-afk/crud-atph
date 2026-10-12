@@ -24,11 +24,12 @@ $is_logged_in = isset($_SESSION['user_id']);
         <li><a href="jadwal/index.php">Jadwal Lapang</a></li>
         <li><a href="kegiatan/index.php">Kegiatan</a></li>
       </ul>
-      <div class="nav-actions">
+    <div class="nav-actions">
         <?php if ($is_logged_in): ?>
           <a href="logout.php" class="btn-auth btn-logout">Logout</a>
         <?php else: ?>
-          <a href="login.php" class="btn-auth btn-login">Login</a>
+          <a href="register.php" class="btn-auth btn-signup" style="margin-right: 8px; background-color: transparent; border: 2px solid #10b981; color: #10b981;">Sign Up</a>
+          <a href="login.php" class="btn-auth btn-login">Sign In</a>
         <?php endif; ?>
       </div>
     </nav>
@@ -59,7 +60,7 @@ $is_logged_in = isset($_SESSION['user_id']);
       <p class="hero-desc">Pertanian bukan sekadar bercocok tanam, melainkan seni mengelola masa depan pangan berbasis teknologi modern. Kami berfokus pada pengembangan keterampilan siswa dalam mengelola tanaman pangan, buah, sayuran, hingga sistem hidroponik.</p>
       <div class="hero-badges"><span class="badge">Modern Agri</span><span class="badge">Hidroponik</span><span class="badge">Teknologi Digital</span></div>
     </div>
-    <div class="hero-image-wrapper"><img src="suga3-removebg-preview.png" alt="Foto Utama ATPH" class="hero-img" onerror="this.src='https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=500'"></div>
+    <div class="hero-image-wrapper"><img src="model.png" alt="Foto Utama ATPH" class="hero-img" onerror="this.src='https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=500'"></div>
 </section>
 
 <div class="about-grid">

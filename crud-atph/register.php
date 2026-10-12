@@ -1,19 +1,30 @@
 <?php
 session_start();
+include '../koneksi.php'; // Sesuaikan jalur file koneksi database kamu
 
-// 1. Cek apakah user belum login sama sekali
-if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Silakan login terlebih dahulu!'); window.location='login.php';</script>";
-    exit();
+if (isset($_POST['register'])) {
+    $username     = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $nama_lengkap = mysqli_real_escape_string($koneksi, $_POST['nama_lengkap']);
+    $kelas        = mysqli_real_escape_string($koneksi, $_POST['kelas']); // Tambahan untuk menyimpan kelas
+    $password     = $_POST['password']; 
+    $role         = 'siswa'; // Diubah otomatis menjadi 'siswa' agar masuk ke portal siswa
+
+    // Cek apakah username sudah digunakan sebelumnya
+    $cek_user = mysqli_query($koneksi, "SELECT * FROM users WHERE username = '$username'");
+    if (mysqli_num_rows($cek_user) > 0) {
+        echo "<script>alert('Username sudah digunakan, silakan pilih username lain!');</script>";
+    } else {
+        // Simpan data ke tabel users beserta kelas, role siswa, dan poin awal 0
+        $query = "INSERT INTO users (username, password, nama_lengkap, kelas, role, poin) VALUES ('$username', '$password', '$nama_lengkap', '$kelas', '$role', 0)";
+        $insert = mysqli_query($koneksi, $query);
+
+        if ($insert) {
+            echo "<script>alert('Registrasi akun siswa berhasil! Silakan login.'); window.location='login.php';</script>";
+        } else {
+            echo "<script>alert('Registrasi gagal, silakan coba lagi.');</script>";
+        }
+    }
 }
-
-// 2. Cek apakah yang login bukan admin (siswa/tamu ditolak)
-if ($_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Hanya admin yang dapat melakukan perubahan.'); window.location='index.php';</script>";
-    exit();
-}
-
-include 'config/koneksi.php';
 ?>
 
 <!DOCTYPE html>
@@ -27,11 +38,11 @@ include 'config/koneksi.php';
             background-color: #122818;
             color: #fff;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
         .register-container {
             width: 100%;
@@ -54,7 +65,7 @@ include 'config/koneksi.php';
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], select {
             width: 100%;
             padding: 10px;
             border: 1px solid #4CAF50;
@@ -62,6 +73,10 @@ include 'config/koneksi.php';
             background: #122818;
             color: #fff;
             box-sizing: border-box;
+        }
+        select option {
+            background: #122818;
+            color: #fff;
         }
         .btn-register {
             background-color: #4CAF50;
@@ -73,6 +88,7 @@ include 'config/koneksi.php';
             width: 100%;
             font-size: 16px;
             font-weight: bold;
+            margin-top: 10px;
         }
         .btn-register:hover {
             background-color: #45a049;
@@ -98,9 +114,21 @@ include 'config/koneksi.php';
                 <label>Nama Lengkap:</label>
                 <input type="text" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
             </div>
+            
+            <div class="form-group">
+                <label>Kelas:</label>
+                <select name="kelas" required>
+                    <option value="">-- Pilih Kelas --</option>
+                    <option value="XI ATPH 1">XI ATPH 1</option>
+                    <option value="XI ATPH 2">XI ATPH 2</option>
+                    <option value="XII ATPH 1">XII ATPH 1</option>
+                    <option value="XII ATPH 2">XII ATPH 2</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Username:</label>
-                <input type="text" name="username" placeholder="Buat username" required>
+                <input type="text" name="username" placeholder="Buat username unik" required>
             </div>
             <div class="form-group">
                 <label>Password:</label>

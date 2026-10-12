@@ -11,6 +11,18 @@ $q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC");
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
+  <!-- Tombol Navigasi Ganda -->
+<div style="display: flex; gap: 15px; margin-bottom: 20px;">
+    <!-- Tombol ke Halaman Utama / Dashboard Umum -->
+    <a href="../index.php" style="display: inline-flex; align-items: center; gap: 8px; color: #4b5563; text-decoration: none; font-weight: 500; font-size: 14px; background: #e5e7eb; padding: 8px 14px; border-radius: 6px; transition: 0.2s;">
+        <i class="fas fa-home"></i> Dashboard Utama
+    </a>
+    
+    <!-- Tombol khusus kembali ke Panel Admin -->
+    <a href="../admin/index.php" style="display: inline-flex; align-items: center; gap: 8px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 14px; background: #10b981; padding: 8px 14px; border-radius: 6px; transition: 0.2s;">
+        <i class="fas fa-user-shield"></i> Panel Admin
+    </a>
+</div>
 <body>
 <div class="glow"></div>
 <h1 class="judul">DATA GURU ATPH</h1>
