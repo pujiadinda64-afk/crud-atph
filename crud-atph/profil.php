@@ -61,7 +61,7 @@ if (isset($_POST['simpan_profil'])) {
 <div class="card">
     <h2 style="color: #1b4332; text-align: center; margin-bottom: 10px;">Lengkapi Profil</h2>
     <p style="font-size: 13px; color: #666; text-align: center; margin-bottom: 20px;">
-        Halo <b><?= htmlspecialchars($user['username']); ?></b>, silakan lengkapi data diri Anda sebagai <b><?= ucfirst($role); ?></b>.
+        Halo <b><?= htmlspecialchars($user['username'] ?? ''); ?></b>, silakan lengkapi data diri Anda sebagai <b><?= ucfirst($role); ?></b>.
     </p>
 
     <?php if (isset($error)): ?>
@@ -69,16 +69,16 @@ if (isset($_POST['simpan_profil'])) {
     <?php endif; ?>
 
     <!-- FORM UTAMA MENCAKUP SEMUA INPUT -->
-    <form action="proses_profil.php" method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data">
         
         <div class="form-group" style="margin-bottom: 15px;">
             <label>Nama Lengkap</label><br>
-            <input type="text" name="nama_lengkap" value="<?php echo $data_user['nama_lengkap'] ?? ''; ?>" style="width: 100%; padding: 8px;">
+            <input type="text" name="nama_lengkap" value="<?php echo htmlspecialchars($user['nama_lengkap'] ?? ''); ?>" style="width: 100%; padding: 8px;" required>
         </div>
 
         <div class="form-group" style="margin-bottom: 15px;">
             <label>Gmail Valid</label><br>
-            <input type="email" name="email" value="<?php echo $data_user['email'] ?? ''; ?>" style="width: 100%; padding: 8px;">
+            <input type="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" style="width: 100%; padding: 8px;" required>
         </div>
 
         <div class="form-group" style="margin-bottom: 15px;">
@@ -89,7 +89,7 @@ if (isset($_POST['simpan_profil'])) {
 
         <div class="form-group" style="margin-bottom: 15px;">
             <label>Kelas</label><br>
-            <input type="text" name="kelas" value="<?php echo $data_user['kelas'] ?? ''; ?>" style="width: 100%; padding: 8px;">
+            <input type="text" name="kelas" value="<?php echo htmlspecialchars($user['kelas'] ?? ''); ?>" style="width: 100%; padding: 8px;">
         </div>
 
         <!-- Tombol Simpan Utama di Bawah -->
