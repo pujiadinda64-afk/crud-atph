@@ -23,7 +23,15 @@ if (!$alat) {
     exit;
 }
 
-$fotoPath = __DIR__ . '/../uploads/' . ($alat['foto'] ?? '');
+// Hitung nomor urut tampilan (posisi alat ini di antara semua alat)
+$stmtNo = mysqli_prepare($koneksi, 'SELECT COUNT(*) AS no_urut FROM alat WHERE id_alat <= ?');
+mysqli_stmt_bind_param($stmtNo, 'i', $id);
+mysqli_stmt_execute($stmtNo);
+$rowNo = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtNo));
+mysqli_stmt_close($stmtNo);
+$nomorUrut = (int) $rowNo['no_urut'];
+
+$fotoPath = __DIR__ . '/uploads/' . ($alat['foto'] ?? '');
 $adaFoto  = !empty($alat['foto']) && is_file($fotoPath);
 
 $PALET = [
@@ -81,14 +89,16 @@ function tanggalIndonesia(): string {
   .backlink:hover{text-decoration:underline;}
 
   .detail-card{background:#fff; border:1px solid var(--line); border-radius:26px; padding:34px; box-shadow:var(--shadow); border-top:8px solid var(--acc);}
-  .top-row{display:flex; gap:26px; flex-wrap:wrap; align-items:center;}
-  .icon-big{width:170px; height:170px; border-radius:24px; background:radial-gradient(circle at 30% 25%, var(--acc-bg) 0%, var(--acc-bg) 40%, #ffffff 100%); display:flex; align-items:center; justify-content:center; overflow:hidden; flex:0 0 auto; position:relative; border:1px solid var(--line);}
-  .icon-big img{width:100%; height:100%; object-fit:cover;}
+
+  /* foto besar di atas, judul di bawah */
+  .top-row{display:flex; flex-direction:column; gap:20px;}
+  .icon-big{width:100%; height:420px; border-radius:24px; background:radial-gradient(circle at 30% 25%, var(--acc-bg) 0%, var(--acc-bg) 40%, #ffffff 100%); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; border:1px solid var(--line);}
+  .icon-big img{width:100%; height:100%; object-fit:contain;}
   .icon-big .avatar-fallback{position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;}
   .icon-big .avatar-ring{position:absolute; width:118px; height:118px; border-radius:50%; border:2px dashed var(--acc); opacity:.35;}
   .icon-big .avatar-icon{position:absolute; width:100px; height:100px; opacity:.16; fill:var(--acc);}
   .icon-big .huruf{position:relative; font-size:58px; font-weight:800; color:var(--acc); text-shadow:0 2px 0 rgba(255,255,255,.6); font-family:'Fredoka',sans-serif;}
-  .title-block{flex:1; min-width:220px;}
+  .title-block{width:100%;}
   .idtag{font-size:12.5px; font-weight:800; color:var(--acc); background:var(--acc-bg); display:inline-block; padding:4px 12px; border-radius:999px;}
   .title-block h2{font-size:28px; margin-top:10px; color:var(--ink);}
 
@@ -129,7 +139,7 @@ function tanggalIndonesia(): string {
     <div class="top-row">
       <div class="icon-big">
         <?php if ($adaFoto): ?>
-          <img src="../uploads/<?= htmlspecialchars($alat['foto']) ?>" alt="<?= htmlspecialchars($alat['nama_alat']) ?>">
+          <img src="uploads/<?= htmlspecialchars($alat['foto']) ?>" alt="<?= htmlspecialchars($alat['nama_alat']) ?>">
         <?php else: ?>
           <div class="avatar-fallback">
             <div class="avatar-ring"></div>
@@ -142,7 +152,7 @@ function tanggalIndonesia(): string {
         <?php endif; ?>
       </div>
       <div class="title-block">
-        <span class="idtag">ID #<?= $alat['id_alat'] ?></span>
+        <span class="idtag">No. <?= $nomorUrut ?></span>
         <h2><?= htmlspecialchars($alat['nama_alat']) ?></h2>
       </div>
     </div>
@@ -173,4 +183,4 @@ function tanggalIndonesia(): string {
   </div>
 </main>
 </body>
-</html>
+</html>   

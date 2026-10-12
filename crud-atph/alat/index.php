@@ -17,6 +17,7 @@ $daftarAlat = [];
 while ($baris = mysqli_fetch_assoc($hasil)) {
     $daftarAlat[] = $baris;
 }
+$totalAlat = count($daftarAlat);
 
 // pesan status dari tambah.php / hapus.php
 $pesan = $_GET["pesan"] ?? null;
@@ -63,8 +64,21 @@ $PALET = [
   ["#84CC16","#ECFCCB"],["#6366F1","#E0E7FF"],
 ];
 
+// mengembalikan nama file jika berupa dokumen (bukan gambar), selain itu string kosong
+function dokumenAlat($alat) {
+    if (empty($alat["foto"]) || !file_exists("uploads/" . $alat["foto"])) return "";
+    $ext = strtolower(pathinfo($alat["foto"], PATHINFO_EXTENSION));
+    return in_array($ext, ["jpg","jpeg","png","webp"], true) ? "" : $alat["foto"];
+}
+
 function renderIkon($alat,$ICONS) {
     if (!empty($alat["foto"]) && file_exists("uploads/" . $alat["foto"])) {
+        $dok = dokumenAlat($alat);
+        if ($dok !== "") {
+            // ikon dokumen (WPS, PDF, dll) berbentuk SVG, ukurannya ikut CSS yang sudah ada
+            $ext = strtoupper(htmlspecialchars(pathinfo($dok, PATHINFO_EXTENSION)));
+            return '<svg viewBox="0 0 100 100"><path d="M24 8 H62 L80 26 V90 H24 Z" fill="#fff" stroke="#9CA3AF" stroke-width="3"/><path d="M62 8 V26 H80" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="3"/><rect x="24" y="52" width="56" height="20" fill="#16A34A"/><text x="52" y="67" font-size="13" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial">' . $ext . '</text><line x1="34" y1="36" x2="68" y2="36" stroke="#CBD5E1" stroke-width="3"/><line x1="34" y1="44" x2="58" y2="44" stroke="#CBD5E1" stroke-width="3"/></svg>';
+        }
         return '<img src="uploads/' . htmlspecialchars($alat["foto"]) . '" alt="' . htmlspecialchars($alat["nama_alat"]) . '" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
     }
     if (!empty($alat["icon_key"]) && isset($ICONS[$alat["icon_key"]])) {
@@ -141,7 +155,7 @@ function tanggalIndonesia() {
   .banner div{background:var(--green-soft); color:var(--green-dark); border:1px solid var(--line); border-radius:14px; padding:12px 18px; font-size:13.5px; font-weight:700;}
   .controls{max-width:1200px; margin:22px auto 6px; padding:0 6vw; display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
   .search{flex:1 1 260px; position:relative;}
-  .search input{width:100%; padding:13px 16px 13px 42px; border-radius:14px; border:2px solid var(--line); font-family:inherit; font-size:14.5px; outline:none;}
+  .search input[type=text]{width:100%; padding:13px 16px 13px 42px; border-radius:14px; border:2px solid var(--line); font-family:inherit; font-size:14.5px; outline:none;}
   .search::before{content:"🔍"; position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:14px;}
   .sort-select{padding:12px 16px; border-radius:14px; border:2px solid var(--line); font-family:inherit; font-size:13.5px; background:#fff; cursor:pointer;}
   .fav-filter{border:2px solid var(--line); background:#fff; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:800; color:var(--ink-soft); cursor:pointer;}
@@ -158,6 +172,7 @@ function tanggalIndonesia() {
   .card .fav.on{transform:scale(1.3);}
   .card .icon-wrap{height:96px; border-radius:16px; background:var(--acc-bg); display:flex; align-items:center; justify-content:center; margin:20px 0 12px; overflow:hidden;}
   .card .icon-wrap svg{height:66px; width:auto;}
+  .card .icon-wrap img{width:100%; height:100%; object-fit:contain !important;}
   .card h3{font-size:15.5px;}
   .card p.fungsi{font-size:12.5px; color:var(--ink-soft); margin-top:5px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
   .card .tap{font-size:11px; color:var(--acc); font-weight:800; margin-top:10px;}
@@ -230,7 +245,7 @@ function tanggalIndonesia() {
   <div class="hero">
     <div class="hero-card">
       <h2>Daftar Alat ATPH</h2>
-      <p>Kumpulan alat pertanian tanaman pangan &amp; hortikultura, tersimpan langsung dari database. Ketuk kartu untuk detail, unggah foto asli lewat tab Kelola Data.</p>
+      <p>Kumpulan alat pertanian tanaman pangan &amp; hortikultura, tersimpan langsung dari database. Ketuk kartu untuk detail, unggah foto atau dokumen lewat tab Kelola Data.</p>
     </div>
   </div>
 
@@ -244,22 +259,23 @@ function tanggalIndonesia() {
   </div>
 
   <div class="stats">
-    <div class="stat"><b><?php echo count($daftarAlat); ?></b>&nbsp;alat terdaftar</div>
+    <div class="stat"><b><?php echo $totalAlat; ?></b>&nbsp;alat terdaftar</div>
     <div class="stat"><b id="favCount">0</b>&nbsp;alat favorit</div>
   </div>
 
   <main>
     <div class="grid" id="grid">
       <?php foreach ($daftarAlat as $i => $alat):
-          $acc = $PALET[$i % count($PALET)]; ?>
-      <div class="card" data-nama="<?php echo htmlspecialchars(strtolower($alat['nama_alat'])) ;?>" data-id="<?php echo $alat['id']; ?>" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
-        <span class="idbadge">#<?php echo $alat['id_alat']; ?></span>
+          $acc = $PALET[$i % count($PALET)];
+          $nomorUrut = $totalAlat - $i; // nomor urut tampilan (data diurutkan DESC) ?>
+      <div class="card" data-nama="<?php echo htmlspecialchars(strtolower($alat['nama_alat'])) ;?>" data-id="<?php echo $alat['id']; ?>" data-no="<?php echo $nomorUrut; ?>" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
+        <span class="idbadge">#<?php echo $nomorUrut; ?></span>
         <button class="fav" title="Tandai favorit">☆</button>
         <div class="icon-wrap"><?php echo renderIkon($alat, $ICONS); ?></div>
         <h3><?php echo htmlspecialchars($alat['nama_alat']); ?></h3>
         <p class="fungsi"><?php echo htmlspecialchars($alat['cara_pakai'] ?? ''); ?></p>
         <div class="tap">Ketuk untuk detail →</div>
-        <script type="application/json" class="detail-data"><?php echo json_encode(['cara_pakai' => $alat['cara_pakai'] ?? '']); ?></script>
+        <script type="application/json" class="detail-data"><?php echo json_encode(['cara_pakai' => $alat['cara_pakai'] ?? '', 'file' => dokumenAlat($alat)]); ?></script>
       </div>
       <?php endforeach; ?>
     </div>
@@ -286,8 +302,8 @@ function tanggalIndonesia() {
           <input type="text" name="kondisi" placeholder="mis. Baik" required>
         </div>
         <div class="full">
-          <label>Foto Alat (jpg/png/webp, maks 2MB)</label>
-          <div class="filepick"><input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp"></div>
+          <label>Foto / Dokumen Alat (jpg, png, webp, wps, et, dps, pdf, doc, docx, xls, xlsx, ppt, pptx, maks 5MB)</label>
+          <div class="filepick"><input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp,.wps,.et,.dps,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></div>
         </div>
         <button type="submit" class="save-btn">💾 Simpan Alat</button>
       </form>
@@ -295,16 +311,20 @@ function tanggalIndonesia() {
 
     <div class="panel">
       <h2>Daftar Alat</h2>
-      <p class="sub">Total <b><?php echo count($daftarAlat); ?></b> alat tersimpan. Hapus memanggil <code>hapus.php?id=...</code>.</p>
+      <p class="sub">Total <b><?php echo $totalAlat; ?></b> alat tersimpan. Hapus memanggil <code>hapus.php?id=...</code>.</p>
       <div class="list">
         <?php foreach ($daftarAlat as $i => $alat):
-            $acc = $PALET[$i % count($PALET)]; ?>
+            $acc = $PALET[$i % count($PALET)];
+            $nomorUrut = $totalAlat - $i; ?>
         <div class="row" style="--acc:<?php echo $acc[0]; ?>;--acc-bg:<?php echo $acc[1]; ?>;">
           <div class="ic"><?php echo renderIkon($alat, $ICONS); ?></div>
           <div class="info">
-            <div class="nm"><?php echo htmlspecialchars($alat['nama_alat']); ?> <span class="idnum">#<?php echo $alat['id']; ?></span></div>
-            <div class="fg"><?php echo htmlspecialchars($alat['cara_pakai']); ?></div>
+            <div class="nm"><?php echo htmlspecialchars($alat['nama_alat']); ?> <span class="idnum">#<?php echo $nomorUrut; ?></span></div>
+            <div class="fg"><?php echo htmlspecialchars($alat['cara_pakai'] ?? ''); ?></div>
           </div>
+          <?php if (dokumenAlat($alat) !== ""): ?>
+          <a class="det-link" href="uploads/<?php echo rawurlencode(dokumenAlat($alat)); ?>" download>⬇️ File</a>
+          <?php endif; ?>
           <a class="det-link" href="detail.php?id=<?php echo $alat['id_alat']; ?>">📄 Detail</a>
           <a class="del-link" 
            href="hapus.php?id=<?php echo $alat['id']; ?>" 
@@ -390,7 +410,8 @@ document.querySelectorAll('.card').forEach(card=>{
     const accBg = getComputedStyle(card).getPropertyValue('--acc-bg').trim();
     const nama = card.querySelector('h3').textContent;
     const fungsi = card.querySelector('.fungsi').textContent;
-    const id = card.dataset.id;
+    const id = card.dataset.id;   // ID asli database (untuk link detail)
+    const no = card.dataset.no;   // nomor urut tampilan
     const iconHtml = card.querySelector('.icon-wrap').innerHTML;
     const detail = JSON.parse(card.querySelector('.detail-data').textContent);
     const box = document.getElementById('modalBox');
@@ -399,10 +420,11 @@ document.querySelectorAll('.card').forEach(card=>{
     box.innerHTML = `
       <button class="close" onclick="document.getElementById('overlay').classList.remove('show')">✕</button>
       <div class="icon-big">${iconHtml}</div>
-      <div class="idtag">ID #${id}</div>
+      <div class="idtag">No. ${no}</div>
       <h2>${nama}</h2>
       <div class="sec"><h4>Fungsi</h4><p>${fungsi}</p></div>
       <div class="sec"><h4>Cara Pakai</h4><p>${detail.cara_pakai || '—'}</p></div>
+      ${detail.file ? `<div class="sec"><h4>Dokumen</h4><p><a href="uploads/${encodeURIComponent(detail.file)}" download style="color:var(--acc);font-weight:800;">⬇️ Unduh file</a></p></div>` : ''}
       <div class="modal-actions" style="margin-top:20px;">
         <a href="detail.php?id=${id}" style="display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:#fff;border:none;border-radius:999px;padding:10px 20px;font-weight:800;font-size:13px;text-decoration:none;">📄 Buka Halaman Detail Lengkap</a>
       </div>
