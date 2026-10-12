@@ -43,7 +43,7 @@ while($d = mysqli_fetch_assoc($q)){
     <div class="nip">NIP: <?= htmlspecialchars($d['Nip']);?></div>
     <div class="bottom">
       <span><?= htmlspecialchars($d['Mapel_Utama']);?></span>
-      <span class="eth"><?= $d['Wali_Kelas']?: 'XI ATPH 1';?></span>
+      <span class="eth"><?= $d['Wali_Kelas'];?></span>
     </div>
     <div class="aksi">
       <a href="edit.php?nip=<?= $d['Nip'];?>" class="edit">Edit</a>
