@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

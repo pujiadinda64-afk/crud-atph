@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
+    exit();
+}
+
 if(file_exists("../../koneksi.php")) include "../../koneksi.php";
 elseif(file_exists("../koneksi.php")) include "../koneksi.php";
 else include "koneksi.php";
