@@ -1,93 +1,78 @@
 <?php
 include '../config/koneksi.php';
-$q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY Nip DESC");
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED);
+$q = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY 1 ASC");
+$all=[]; while($r=mysqli_fetch_assoc($q)){$r=array_change_key_case($r,CASE_LOWER); $all[]=$r;}
+function getInitials($nama){$p=explode(" ",trim($nama));if(count($p)>=2)return strtoupper(substr($p[0],0,1).substr(end($p),0,1));return strtoupper(substr($nama,0,2));}
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DATA GURU ATPH</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head>
-  <!-- Tombol Navigasi Ganda -->
-<div style="display: flex; gap: 15px; margin-bottom: 20px;">
-    <!-- Tombol ke Halaman Utama / Dashboard Umum -->
-    <a href="../index.php" style="display: inline-flex; align-items: center; gap: 8px; color: #4b5563; text-decoration: none; font-weight: 500; font-size: 14px; background: #e5e7eb; padding: 8px 14px; border-radius: 6px; transition: 0.2s;">
-        <i class="fas fa-home"></i> Dashboard Utama
-    </a>
-    
-    <!-- Tombol khusus kembali ke Panel Admin -->
-    <a href="../admin/index.php" style="display: inline-flex; align-items: center; gap: 8px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 14px; background: #10b981; padding: 8px 14px; border-radius: 6px; transition: 0.2s;">
-        <i class="fas fa-user-shield"></i> Panel Admin
-    </a>
-</div>
-<body>
-<div class="glow"></div>
-<h1 class="judul">DATA GURU ATPH</h1>
-<p class="sub">AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</p>
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATA GURU ATPH</title><link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+</head><body>
 
-<?php if (isset($_GET['pesan'])): ?>
-<div style="max-width:900px;margin:0 auto 18px;padding:12px 16px;border-radius:10px;background:#e8f5e9;color:#1b5e20;font-weight:700;">
-<?= htmlspecialchars([
-'hapus_sukses'=>'Data guru berhasil dihapus.',
-'hapus_gagal'=>'Data guru gagal dihapus.',
-'tidak_ditemukan'=>'Data guru tidak ditemukan.'
-][$_GET['pesan']] ?? '') ?>
+<div class="bg"></div>
+
+<div class="top-nav">
+  <a href="../index.php" class="btn-nav">Dashboard Utama</a>
+  <a href="index.php" class="btn-nav active">Panel Admin</a>
+  <a href="tambah.php" class="btn-nav" style="background:#f1f5f9;color:#0f2a15;font-weight:800;">+ Tambah Data</a>
 </div>
-<?php endif; ?>
-<div class="wrap" id="wrap">
-<?php
-$no=0;
-while($d = mysqli_fetch_assoc($q)){
-  $no++;
-  $foto = "uploads/".$d['Foto'];
-  if(empty($d['Foto']) ||!file_exists($foto)){
-    $foto = "https://ui-avatars.com/api/?name=".urlencode($d['Nama'])."&background=2e7d32&color=fff&size=300";
-  }
-  $center = ($no==3)? 'center' : '';
+
+<div class="header">
+  <h1>DATA GURU ATPH</h1>
+  <p>AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</p>
+</div>
+
+<div class="carousel" id="carousel">
+<?php foreach($all as $d){
+  $nama=$d['nama']??$d['nama_guru']??'Guru'; $nip=$d['nip']??''; $mapel=$d['mapel_utama']??$d['mapel']??'Dasar'; $kelas=trim($d['wali_kelas']??$d['kelas']??'');
+  $foto_file=$d['foto']??''; $has=file_exists("uploads/".$foto_file)&&$foto_file!=''; $inisial=getInitials($nama);
 ?>
-<div class="card <?= $center;?>">
-  <img src="<?= $foto;?>">
+<div class="card" data-nip="<?= $nip?>">
+  <?php if($has){?>
+    <img src="uploads/<?= $foto_file?>" class="foto-real" draggable="false">
+  <?php } else {?>
+    <div class="foto-fake"><span class="inisial"><?= $inisial?></span></div>
+  <?php }?>
   <div class="info">
-    <div class="name"><?= htmlspecialchars($d['Nama']);?></div>
-    <div class="nip">NIP: <?= htmlspecialchars($d['Nip']);?></div>
-    <div class="bottom">
-      <span><?= htmlspecialchars($d['Mapel_Utama']);?></span>
-      <span class="eth"><?= $d['Wali_Kelas'];?></span>
-    </div>
-    <div class="aksi">
-      <a href="edit.php?nip=<?= $d['Nip'];?>" class="edit">Edit</a>
-      <a href="hapus.php?nip=<?= $d['Nip'];?>" class="hapus" onclick="return confirm('Hapus?')">Hapus</a>
-    </div>
+    <div class="name-kecil"><?= htmlspecialchars($nama)?></div>
+    <div class="nip-kecil">NIP: <?= htmlspecialchars($nip)?></div>
+    <div class="mapel-kecil">Mapel: <?= htmlspecialchars($mapel)?></div>
+    <div class="bottom2"><span class="badge-dasar"><?= htmlspecialchars($mapel)?></span><?php if($kelas!==''):?><span class="kelas-label"><?= htmlspecialchars($kelas)?></span><?php endif;?></div>
+    <div class="aksi"><a href="edit.php?nip=<?= urlencode($nip)?>" class="edit">Edit</a><a href="hapus.php?nip=<?= urlencode($nip)?>" class="hapus" onclick="return confirm('Hapus?')">Hapus</a></div>
   </div>
 </div>
 <?php }?>
 </div>
 
-<a href="tambah.php" class="tambah">+ Tambah Guru</a>
+<div class="controls">
+  <button id="prev">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next">›</button>
+</div>
 
 <script>
-const wrap = document.getElementById('wrap');
-const cards = document.querySelectorAll('.card');
-const defaultCenter = 2; // index ke-3 (0,1,2) yang jadi gede awal
-
-cards.forEach((card, i) => {
-  card.addEventListener('mouseenter', () => {
-    cards.forEach(c => c.classList.remove('center'));
-    card.classList.add('center');
+const cards=document.querySelectorAll('.card');let cur=0;const total=cards.length;
+const dotsEl=document.getElementById('dots');
+for(let i=0;i<total;i++){let d=document.createElement('div');d.className='dot';d.onclick=()=>{cur=i;update()};dotsEl.appendChild(d);}
+function update(){
+  cards.forEach((c,i)=>{
+    let o=i-cur; if(o>total/2)o-=total; if(o<-total/2)o+=total;
+    c.classList.remove('active');
+    if(o===0){c.style.transform='translateX(0) scale(1.15)';c.style.zIndex=10;c.style.opacity=1;c.classList.add('active');}
+    else if(o===1||o===-1){c.style.transform=`translateX(${o*175}px) scale(0.92)`;c.style.zIndex=5;c.style.opacity=.85;}
+    else if(o===2||o===-2){c.style.transform=`translateX(${o*200}px) scale(0.78)`;c.style.zIndex=2;c.style.opacity=.5;}
+    else{c.style.transform=`translateX(${o*220}px) scale(0.6)`;c.style.zIndex=0;c.style.opacity=0;}
   });
-});
-
-// kalau mouse keluar dari area, balikin ke tengah default
-wrap.addEventListener('mouseleave', () => {
-  cards.forEach(c => c.classList.remove('center'));
-  if(cards[defaultCenter]){
-    cards[defaultCenter].classList.add('center');
-  }
-});
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+}
+cards.forEach((c,i)=>{c.addEventListener('click',e=>{if(e.target.closest('.aksi'))return; if(i!==cur){cur=i;update();}});});
+document.getElementById('prev').onclick=()=>{cur=(cur-1+total)%total;update();}
+document.getElementById('next').onclick=()=>{cur=(cur+1)%total;update();}
+let sX=0;const car=document.getElementById('carousel');
+car.addEventListener('touchstart',e=>{sX=e.touches[0].clientX},{passive:true});
+car.addEventListener('touchend',e=>{let d=e.changedTouches[0].clientX-sX; if(d<-50){cur=(cur+1)%total;update();} if(d>50){cur=(cur-1+total)%total;update();}});
+update();
 </script>
-
-</body>
-</html>
+</body></html>

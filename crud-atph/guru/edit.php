@@ -1,22 +1,37 @@
 <?php
-session_start(); // Wajib ada untuk membaca status login
+if(file_exists("../../koneksi.php")) include "../../koneksi.php";
+elseif(file_exists("../koneksi.php")) include "../koneksi.php";
+else include "koneksi.php";
+if(isset($koneksi) && !isset($conn)) $conn = $koneksi;
 
-// Cek apakah user sudah login dan apakah rolenya adalah admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
-    exit();
-}
-
-include '../config/koneksi.php';
-$nip = $_GET['nip'];
-$data = mysqli_fetch_assoc(mysqli_query($koneksi,"SELECT * FROM guru WHERE Nip='$nip'"));
+$nip_url = $_GET['nip'] ?? '';
+$nip_url = mysqli_real_escape_string($conn, $nip_url);
+$data_q = mysqli_query($conn, "SELECT * FROM guru WHERE nip='$nip_url'");
+$data = mysqli_fetch_assoc($data_q);
+if(!$data) die("Data NIP $nip_url tidak ditemukan");
 
 if(isset($_POST['update'])){
-  $nama=$_POST['Nama']; $mapel=$_POST['Mapel_Utama']; $wali=$_POST['Wali_Kelas'];
-  $foto=$_FILES['Foto']['name']; $tmp=$_FILES['Foto']['tmp_name'];
-  if($foto){ $fb=time()."_".$foto; move_uploaded_file($tmp,"uploads/".$fb); mysqli_query($koneksi,"UPDATE guru SET Nama='$nama',Mapel_Utama='$mapel',Wali_Kelas='$wali',Foto='$fb' WHERE Nip='$nip'"); }
-  else { mysqli_query($koneksi,"UPDATE guru SET Nama='$nama',Mapel_Utama='$mapel',Wali_Kelas='$wali' WHERE Nip='$nip'"); }
-  header("location:index.php"); exit;
+    $nip_lama = mysqli_real_escape_string($conn, $_POST['nip_lama']);
+    $nip = mysqli_real_escape_string($conn, $_POST['nip']);
+    $Nama = mysqli_real_escape_string($conn, $_POST['Nama']);
+    $Mapel = mysqli_real_escape_string($conn, $_POST['Mapel_Utama']);
+    $Wali = mysqli_real_escape_string($conn, $_POST['Wali_Kelas']);
+    $foto_nama = $data['Foto'];
+
+    if(isset($_FILES['Foto']) && $_FILES['Foto']['error']==0){
+        $ext = pathinfo($_FILES['Foto']['name'], PATHINFO_EXTENSION);
+        $foto_nama = $nip."_".time().".".$ext;
+        $dir1 = "../../foto/"; $dir2 = "../foto/";
+        if(!is_dir($dir1)) mkdir($dir1,0777,true);
+        move_uploaded_file($_FILES['Foto']['tmp_name'], $dir1.$foto_nama);
+        if(is_dir($dir2)) copy($dir1.$foto_nama, $dir2.$foto_nama);
+    }
+
+    $update = mysqli_query($conn, "UPDATE guru SET nip='$nip', Nama='$Nama', Mapel_Utama='$Mapel', Wali_Kelas='$Wali', Foto='$foto_nama' WHERE nip='$nip_lama'");
+    if($update){
+        header("Location: data_guru.php?pesan=update_berhasil");
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -24,46 +39,38 @@ if(isset($_POST['update'])){
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Guru</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-html{overflow-y:auto}
-body{min-height:100vh;background:#0a120a;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px 120px 20px;overflow-y:auto}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,rgba(60,120,40,0.25) 0%,rgba(10,18,10,1) 70%);z-index:-1}
-.card{width:100%;max-width:420px;background:linear-gradient(180deg,rgba(25,45,25,0.9) 0%,rgba(15,30,15,0.95) 100%);border:1px solid rgba(127,255,0,0.15);border-radius:20px;padding:28px 24px 32px 24px;box-shadow:0 0 80px rgba(127,255,0,0.12);margin-top:20px}
-.card h2{color:#7FFF00;text-align:center;font-size:24px;font-weight:800}
-.card .sub{color:rgba(255,255,255,0.45);text-align:center;font-size:11px;font-weight:700;margin:8px 0 22px;text-transform:uppercase}
-label{display:block;text-align:left;color:rgba(255,255,255,0.9);font-size:11px;font-weight:700;margin:18px 0 8px 4px;letter-spacing:0.8px;text-transform:uppercase}
-input[type=text]{width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.45);color:white;outline:none;font-size:14px}
-.file-box{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.45);color:white}
-.foto-lama{margin-top:14px;display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:12px;color:rgba(255,255,255,0.7);font-size:11px}
-.foto-lama img{width:55px;height:55px;object-fit:cover;border-radius:10px}
-.btn-simpan{width:100%;margin-top:24px;padding:13px;background:#7FFF00;color:#000;border:none;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 0 20px rgba(127,255,0,0.4)}
-.batal{display:block;text-align:center;margin-top:16px;padding:12px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;background:rgba(255,255,255,0.06);border-radius:12px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}
+body{min-height:100vh;background:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920') no-repeat center fixed;background-size:cover;display:flex;justify-content:center;align-items:center;padding:20px;position:relative}
+body::before{content:'';position:absolute;inset:0;background:rgba(16,58,29,0.7);backdrop-filter:blur(2px)}
+.card{position:relative;z-index:2;width:100%;max-width:480px;background:linear-gradient(180deg,rgba(40,80,50,0.85),rgba(20,50,30,0.9));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:35px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+.card h2{text-align:center;color:#a8ff78;font-size:28px;font-weight:800}.sub{text-align:center;color:rgba(255,255,255,0.8);font-size:12px;margin:8px 0 28px;font-weight:600;letter-spacing:.8px}
+label{display:block;color:#d1e7c9;font-size:14px;font-weight:700;margin:18px 0 8px}
+input[type=text]{width:100%;padding:14px 16px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.15);border-radius:12px;color:white;outline:none}
+input[type=text]:focus{border-color:#a8ff78;background:rgba(0,0,0,0.5)}
+.file-box{width:100%;padding:10px 12px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.15);border-radius:12px;color:#ccc}
+.foto-lama{margin-top:10px;color:#a8ff78;font-size:12px}.foto-lama img{width:80px;height:80px;object-fit:cover;border-radius:10px;margin-top:5px;border:2px solid rgba(168,255,120,0.3)}
+.btn{width:100%;margin-top:25px;padding:14px;background:linear-gradient(90deg,#7ed957,#5fbb3f);color:#0f2a15;border:none;border-radius:12px;font-weight:800;cursor:pointer}
+.back{display:block;text-align:center;margin-top:15px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px}
 </style>
 </head>
 <body>
 <div class="card">
-  <h2>Edit Data Guru</h2>
-  <div class="sub">Agribisnis Tanaman Pangan & Hortikultura</div>
-  <form method="post" enctype="multipart/form-data">
-    <label>NIP</label>
-    <input type="text" value="<?= $data['Nip']; ?>" disabled style="opacity:0.5">
-    <label>Nama Guru</label>
-    <input type="text" name="Nama" value="<?= htmlspecialchars($data['Nama']); ?>" required>
-    <label>Mapel Utama</label>
-    <input type="text" name="Mapel_Utama" value="<?= htmlspecialchars($data['Mapel_Utama']); ?>" required>
-    <label>Wali Kelas</label>
-    <input type="text" name="Wali_Kelas" value="<?= htmlspecialchars($data['Wali_Kelas']); ?>">
-    <div class="foto-lama">
-      <img src="uploads/<?= $data['Foto']; ?>" onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($data['Nama']); ?>&background=2e7d32&color=fff'">
-      <div><b>Foto Lama:</b><br><?= $data['Foto'] ?: 'Tidak ada foto'; ?></div>
-    </div>
-    <label>Ganti Foto Guru</label>
-    <div class="file-box"><input type="file" name="Foto"></div>
-    <button type="submit" name="update" class="btn-simpan">Update</button>
-    <a href="index.php" class="batal">Batal</a>
-  </form>
+<h2>Edit Data Guru</h2>
+<div class="sub">AGRIBISNIS TANAMAN PANGAN & HORTIKULTURA</div>
+<form method="POST" enctype="multipart/form-data">
+<input type="hidden" name="nip_lama" value="<?= htmlspecialchars($data['nip']) ?>">
+<label>NIP</label><input type="text" name="nip" value="<?= htmlspecialchars($data['nip']) ?>" required>
+<label>Nama Guru</label><input type="text" name="Nama" value="<?= htmlspecialchars($data['Nama']) ?>" required>
+<label>Mapel Utama</label><input type="text" name="Mapel_Utama" value="<?= htmlspecialchars($data['Mapel_Utama']) ?>" required>
+<label>Wali Kelas</label><input type="text" name="Wali_Kelas" value="<?= htmlspecialchars($data['Wali_Kelas']) ?>">
+<label>Foto Guru</label><div class="file-box"><input type="file" name="Foto" accept="image/*"></div>
+<?php if(!empty($data['Foto'])): ?>
+<div class="foto-lama">Foto saat ini: <?= htmlspecialchars($data['Foto']) ?><br><img src="../../foto/<?= htmlspecialchars($data['Foto']) ?>" onerror="this.src='../foto/<?= htmlspecialchars($data['Foto']) ?>'" alt=""></div>
+<?php endif; ?>
+<button type="submit" name="update" class="btn">UPDATE DATA</button>
+</form>
+<a href="index.php" class="back">← Kembali ke Data Guru</a>
 </div>
 </body>
 </html>
