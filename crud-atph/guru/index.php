@@ -15,7 +15,7 @@ function getInitials($nama){$p=explode(" ",trim($nama));if(count($p)>=2)return s
 
 <div class="top-nav">
   <a href="../index.php" class="btn-nav">Dashboard Utama</a>
-  <a href="index.php" class="btn-nav active">Panel Admin</a>
+  <a href="../admin/index.php" class="btn-nav active">Panel Admin</a>
   <a href="tambah.php" class="btn-nav" style="background:#f1f5f9;color:#0f2a15;font-weight:800;">+ Tambah Data</a>
 </div>
 
