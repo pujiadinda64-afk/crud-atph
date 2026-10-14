@@ -47,17 +47,23 @@ if (isset($_POST['update'])) {
                       WHERE id_kegiatan='$id'";
 
     if (mysqli_query($koneksi, $query_update)) {
-        // Upload foto-foto tambahan baru jika ada
-        if (!empty($_FILES['foto_tambahan']['name'][0])) {
-            foreach ($_FILES['foto_tambahan']['name'] as $key => $val) {
+    // Cek apakah ada file foto tambahan yang di-upload
+    if (isset($_FILES['foto_tambahan']['name']) && count($_FILES['foto_tambahan']['name']) > 0) {
+        foreach ($_FILES['foto_tambahan']['name'] as $key => $val) {
+            // Pastikan file benar-benar ada (tidak kosong)
+            if (!empty($_FILES['foto_tambahan']['name'][$key])) {
                 $nama_file = time() . '_' . $_FILES['foto_tambahan']['name'][$key];
                 $tmp_file  = $_FILES['foto_tambahan']['tmp_name'][$key];
 
-                if (move_uploaded_file($tmp_file, 'uploads/' . $nama_file)) {
-                    mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto) VALUES ('$id', '$nama_file')");
+                // Pindahkan file ke folder uploads
+                if (move_uploaded_file($tmp_file, 'uploads/' . $foto)) {
+                    // Simpan nama file ke database
+                    mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto) VALUES ('$id', '$foto')");
                 }
             }
         }
+    }
+
 
         header("Location: index.php");
         exit();
