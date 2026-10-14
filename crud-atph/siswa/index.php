@@ -458,7 +458,7 @@ $poin = $data_user['poin'] ?? 0;
             <a href="../peminjaman/tambah.php" class="nav-item"><i class="fa-solid fa-pen-to-square"></i> Pinjam Alat</a>
             <a href="../jadwal/index.php" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Jadwal Lapang</a>
             <a href="../alat/index.php" class="nav-item"><i class="fa-solid fa-tractor"></i> Cek Stok Alat</a>
-            <a href="upload-laporan.php" class="nav-item"><i class="fa-solid fa-book"></i> Jurnal Praktikum</a>
+            <a href="../siswa/jurnal.php" class="nav-item"><i class="fa-solid fa-book"></i> Jurnal Praktikum</a>
             <a href="riwayat.php" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pinjam</a>
         </div>
     <div class="sidebar-footer">
