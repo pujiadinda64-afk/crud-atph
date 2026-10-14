@@ -1,4 +1,5 @@
 <?php
+
 include '../../koneksi.php';
 // Tangkap kelas & rombel dari URL, contoh: detail.php?kelas=11&rombel=3
 $kelas  = isset($_GET['kelas'])  ? intval($_GET['kelas'])  : 10;

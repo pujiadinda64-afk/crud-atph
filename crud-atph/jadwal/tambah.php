@@ -1,4 +1,5 @@
 <?php
+
 include '../../koneksi.php';
 
 // Kelas & rombel dari URL (dikirim dari detail.php)

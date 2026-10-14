@@ -1,10 +1,11 @@
 <?php
 session_start();
-include '../koneksi.php';
+include 'config/koneksi.php';
 
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+
 
     $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username = '$username'");
     $user  = mysqli_fetch_assoc($query);
@@ -22,11 +23,10 @@ if (isset($_POST['login'])) {
             exit();
         }
 
-        // Redirect sesuai role jika profil sudah lengkap
-        if ($user['role'] == 'admin') {
-            header("Location: index.php"); // Atau dashboard admin
+      if ($user['role'] == 'admin') {
+            header("Location: admin/index.php"); // Masuk ke folder admin
         } else {
-            header("Location: index.php"); // Ke halaman utama siswa
+            header("Location: siswa/index.php"); // <--- UBAH INI: Masuk ke folder siswa
         }
         exit();
     } else {

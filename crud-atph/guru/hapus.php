@@ -1,16 +1,12 @@
 <?php
-session_start(); // Wajib ada untuk baca session
+session_start();
 
-// Cek apakah user adalah admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    echo "<script>alert('Akses ditolak! Fitur ini khusus untuk Admin.'); window.location='index.php';</script>";
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    echo "<script>alert('Akses ditolak! Halaman ini khusus untuk Admin.'); window.location='index.php';</script>";
     exit();
 }
-
-include '../../koneksi.php';
+include '../config/koneksi.php';
 $nip = $_GET['nip'];
-$q = $koneksi->query("SELECT Foto FROM guru WHERE Nip='$nip'")->fetch_assoc();
-if($q && file_exists("uploads/".$q['Foto'])) unlink("uploads/".$q['Foto']);
-$koneksi->query("DELETE FROM guru WHERE Nip='$nip'");
-echo "<script>alert('Data dihapus');location='index.php';</script>";
+mysqli_query($koneksi, "DELETE FROM guru WHERE Nip='$nip' OR nip='$nip'");
+header("Location: index.php");
 ?>
