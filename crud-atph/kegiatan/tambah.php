@@ -35,10 +35,10 @@ if(isset($_POST['simpan'])){
           if($val){
               $nama_file_tambahan = time()."_".$val;
               $tmp_tambahan = $_FILES['foto_tambahan']['tmp_name'][$key];
-              move_uploaded_file($tmp_tambahan, "uploads/".$nama_file_tambahan);
+              move_uploaded_file($tmp_tambahan, "uploads/".$nama_foto);
               
               // Kolom menggunakan 'nama_foto' agar cocok dengan detail.php
-              mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto) VALUES ('$id_kegiatan_baru', '$nama_file_tambahan')");
+              mysqli_query($koneksi, "INSERT INTO foto_kegiatan (id_kegiatan, nama_foto) VALUES ('$id_kegiatan_baru', '$nama_foto')");
           }
       }
   }

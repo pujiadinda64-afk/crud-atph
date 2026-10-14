@@ -313,7 +313,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
                 <div class="card" onclick="window.location.href='detail.php?id=<?= $d['id_kegiatan']; ?>'">
                     <div class="card-img-wrapper">
                         <?php if ($foto_src): ?>
-                            <img src="<?= $foto_src; ?>" class="card-img" alt="Foto Kegiatan">
+                            <img src="<?= $foto_src; ?>" class="card-img" alt="Foto_Kegiatan">
                         <?php else: ?>
                             <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8; font-size:13px; font-weight:600;">Tanpa Foto</div>
                         <?php endif; ?>
