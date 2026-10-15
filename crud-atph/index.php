@@ -68,8 +68,8 @@ $is_logged_in = isset($_SESSION['user_id']);
     <p class="box-title"><strong>Galeri Praktikum:</strong></p>
     <div class="gallery-mini">
       <div class="gallery-item"><img src="jibril1.jpeg" alt="Praktikum"></div>
-      <div class="gallery-item"><img src="jibril1.jpeg" alt="Praktikum"></div>
-      <div class="gallery-item"><img src="jibril1.jpeg" alt="Praktikum"></div>
+      <div class="gallery-item"><img src="penanaman.jpeg" alt="Praktikum"></div>
+      <div class="gallery-item"><img src="pmpln.jpeg" alt="Praktikum"></div>
     </div>
     <p class="box-desc">Menggabungkan ilmu sains budidaya dengan praktik kerja lapangan secara langsung.</p>
   </div>
