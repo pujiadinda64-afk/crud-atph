@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $error = 'Ukuran foto maksimal 2MB.';
                 } else {
                     $fotoBaru = 'alat_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                    if (!move_uploaded_file($_FILES['foto']['tmp_name'], __DIR__ . '../../uploads' . $fotoBaru)) {
+                    if (!move_uploaded_file($_FILES['foto']['tmp_name'], __DIR__ . 'uploads/' . $fotoBaru)) {
                         $error = 'Foto baru gagal disimpan.';
                     } else {
                         $uploadedNew = true;

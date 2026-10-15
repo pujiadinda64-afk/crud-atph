@@ -489,10 +489,11 @@ $poin = $data_user['poin'] ?? 0;
     <main>
         <!-- Top Bar Header -->
         <div class="top-bar">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                <input type="text" placeholder="Cari alat, jadwal, atau modul...">
-            </div>
+    <form action="../pencarian.php" method="GET" class="search-box">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+        <input type="text" name="keyword" placeholder="Cari alat, jadwal, atau modul..." autocomplete="off">
+    </form>
+</div>
             <div class="top-stats">
                 <div class="badge-stat">
                     <i class="fa-solid fa-seedling"></i> Praktik Lapang: 9/12 Jam

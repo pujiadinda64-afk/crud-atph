@@ -269,6 +269,32 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
         background: #ef4444; 
         color: white; 
     }
+    /* Perbaikan Tampilan Panel Admin di Bagian Atas */
+.header a[href*="admin"], 
+.top-nav a, 
+a:has(+ .header), 
+p a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: none;
+    margin-right: 8px;
+}
+
+.header a[href*="admin"]:hover, 
+.top-nav a:hover {
+    background: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-2px);
+}
 
     @media (max-width: 768px) {
         .card { flex: 0 0 88%; }
@@ -294,6 +320,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM kegiatan ORDER BY id_kegiatan DE
     <?php endif; ?>
 
     <a href="../index.php" class="btn btn-back">&larr; Kembali ke Dashboard</a>
+      <a href="../admin/index.php" class="btn-nav active">Panel Admin</a>
     
     <div class="header">
         <div>

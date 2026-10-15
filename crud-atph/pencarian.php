@@ -4,7 +4,7 @@ include '../koneksi.php';
 
 // 2. Ambil kata kunci dan kategori pencarian dari form
 $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
-$kategori = isset($_GET['kategori']) ? $_GET['kategori'] : 'guru';
+$kategori = isset($_GET['kategori']) ? $_GET['kategori'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -345,7 +345,39 @@ $kategori = isset($_GET['kategori']) ? $_GET['kategori'] : 'guru';
                 </div>
             <?php endif; ?>
 
-        <?php endif; ?>
+            <?php elseif ($kategori == 'kegiatan'): ?>
+                <!-- DATA KEGIATAN -->
+                <div class="horizontal-scroll-container">
+                    <?php
+                    $query = mysqli_query($koneksi, "SELECT * FROM kegiatan WHERE kegiatan LIKE '%$keyword%' OR lokasi LIKE '%$keyword%'");
+                    if (mysqli_num_rows($query) > 0) {
+                        $no = 1;
+                        while ($data = mysqli_fetch_assoc($query)) {
+                    ?>
+                        <div class="project-card">
+                            <div class="card-img-wrapper">
+                                <span class="card-badge">No. <?= $no++; ?></span>
+                                <img src="kegiatan/uploads/<?= $data['foto']; ?>" alt="Foto Kegiatan" onerror="this.src='https://via.placeholder.com/300x180?text=Kegiatan+ATPH'">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title"><?= $data['kegiatan']; ?></h3>
+                                <p class="card-desc">
+                                    <strong>Lokasi:</strong> <?= $data['lokasi']; ?><br>
+                                    <strong>Tanggal:</strong> <?= $data['tanggal']; ?>
+                                </p>
+                                <div class="card-footer">
+                                    <span>Pembimbing: <?= $data['pembimbing']; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php 
+                        }
+                    } else {
+                        echo '<div class="empty-state">Data kegiatan tidak ditemukan.</div>';
+                    }
+                    ?>
+                </div>
+            <?php endif; ?>
     </div>
 
 </body>

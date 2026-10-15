@@ -1,5 +1,4 @@
 <?php
-
 include '../../koneksi.php';
 // Tangkap kelas & rombel dari URL, contoh: detail.php?kelas=11&rombel=3
 $kelas  = isset($_GET['kelas'])  ? intval($_GET['kelas'])  : 10;
@@ -14,8 +13,8 @@ if (!isset($rombel_maks[$kelas]) || $rombel < 1 || $rombel > $rombel_maks[$kelas
     exit;
 }
 
-// Ambil jadwal milik kelas & rombel ini dari database
-$stmt = mysqli_prepare($koneksi, "SELECT * FROM jadwal WHERE kelas = ? AND rombel = ? ORDER BY tanggal ASC");
+// Ambil jadwal milik kelas & rombel ini dari database dengan prepared statement yang benar
+$stmt = mysqli_prepare($koneksi, "SELECT * FROM jadwal_lapang WHERE kelas = ? AND rombel = ?");
 if (!$stmt) {
     die("Query gagal: " . mysqli_error($koneksi));
 }
@@ -29,7 +28,7 @@ $jadwal = mysqli_stmt_get_result($stmt);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Lapang Kelas <?= $kelas; ?> ATPH <?= $rombel; ?> - Sistem ATPH</title>
+    <title>Jadwal Lapang Kelas <?= $kelas; ?> ATPH <?= $rombel; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -152,16 +151,11 @@ $jadwal = mysqli_stmt_get_result($stmt);
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Praktik Hidroponik Sawi</td>
-                    <td>Greenhouse 1</td>
-                    <td>2024-06-15</td>
-                    <td>08.00 - 10.00</td>
-                    <td>Bpk. Ahmad S.Pd.</td>
-                    <td class="action-links">   
-                </tr>
-                <?php $no = 2; while ($row = mysqli_fetch_assoc($jadwal)): ?>
+                <?php 
+                $no = 1; 
+                if (mysqli_num_rows($jadwal) > 0):
+                    while ($row = mysqli_fetch_assoc($jadwal)): 
+                ?>
                 <tr>
                     <td><?= $no++; ?></td>
                     <td><?= htmlspecialchars($row['kegiatan']); ?></td>
@@ -179,7 +173,14 @@ $jadwal = mysqli_stmt_get_result($stmt);
                         </form>
                     </td>
                 </tr>
-                <?php endwhile; ?>
+                <?php 
+                    endwhile; 
+                else:
+                ?>
+                <tr>
+                    <td colspan="7" class="kosong">Belum ada jadwal lapang untuk kelas ini.</td>
+                </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

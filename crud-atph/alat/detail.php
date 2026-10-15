@@ -31,7 +31,7 @@ $rowNo = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtNo));
 mysqli_stmt_close($stmtNo);
 $nomorUrut = (int) $rowNo['no_urut'];
 
-$fotoPath = __DIR__ . '/uploads/' . ($alat['foto'] ?? '');
+$fotoPath = __DIR__ . 'uploads/' . ($alat['foto'] ?? '');
 $adaFoto  = !empty($alat['foto']) && is_file($fotoPath);
 
 $PALET = [

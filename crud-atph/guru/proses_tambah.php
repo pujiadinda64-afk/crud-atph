@@ -51,7 +51,7 @@ $query = "INSERT INTO guru (nip, Nama, Mapel_Utama, Wali_Kelas, Foto)
           VALUES ('$nip', '$Nama', '$Mapel_Utama', '$Wali_Kelas', '$foto_nama')";
 
 if(mysqli_query($conn, $query)){
-    header("Location: data_guru.php?pesan=tambah_berhasil");
+    header("Location: index.php");
     exit;
 } else {
     echo "Gagal simpan: ".mysqli_error($conn);

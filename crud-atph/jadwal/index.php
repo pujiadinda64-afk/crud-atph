@@ -1,4 +1,5 @@
 <?php
+
 include '../../koneksi.php';
 ?>
 
@@ -20,6 +21,7 @@ include '../../koneksi.php';
   <div class="container">
     <div class="top-nav">
       <a href="../index.php" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+        <a href="../admin/index.php" class="btn-nav active">Panel Admin</a>
     </div>
 
     <div class="header">

@@ -176,6 +176,33 @@
     }
     .card:hover::after { animation: kilap .9s ease; }
 
+    /* Perbaikan Tampilan Panel Admin di Bagian Atas */
+.header a[href*="admin"], 
+.top-nav a, 
+a:has(+ .header), 
+p a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: none;
+    margin-right: 8px;
+}
+
+.header a[href*="admin"]:hover, 
+.top-nav a:hover {
+    background: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-2px);
+}
+
     @keyframes muncul { to { opacity: 1; transform: translateY(0); } }
     @keyframes kedip { 50% { opacity: .25; } }
     @keyframes kilap { to { left: 140%; } }

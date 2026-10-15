@@ -25,18 +25,27 @@ if(isset($_POST['update'])){
     $Wali = mysqli_real_escape_string($conn, $_POST['Wali_Kelas']);
     $foto_nama = $data['Foto'];
 
-    if(isset($_FILES['Foto']) && $_FILES['Foto']['error']==0){
+    // Proses upload foto ke folder uploads di dalam folder guru
+    if(isset($_FILES['Foto']) && $_FILES['Foto']['error'] == 0){
         $ext = pathinfo($_FILES['Foto']['name'], PATHINFO_EXTENSION);
         $foto_nama = $nip."_".time().".".$ext;
-        $dir1 = "../../foto/"; $dir2 = "../foto/";
-        if(!is_dir($dir1)) mkdir($dir1,0777,true);
-        move_uploaded_file($_FILES['Foto']['tmp_name'], $dir1.$foto_nama);
-        if(is_dir($dir2)) copy($dir1.$foto_nama, $dir2.$foto_nama);
+        
+        $dir = "uploads/";
+        if(!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        // Hapus foto lama jika ada di folder uploads
+        if(!empty($data['Foto']) && file_exists($dir . $data['Foto'])) {
+            unlink($dir . $data['Foto']);
+        }
+        
+        move_uploaded_file($_FILES['Foto']['tmp_name'], $dir . $foto_nama);
     }
 
     $update = mysqli_query($conn, "UPDATE guru SET nip='$nip', Nama='$Nama', Mapel_Utama='$Mapel', Wali_Kelas='$Wali', Foto='$foto_nama' WHERE nip='$nip_lama'");
     if($update){
-        header("Location: data_guru.php?pesan=update_berhasil");
+        header("Location: index.php");
         exit;
     }
 }
@@ -73,7 +82,7 @@ input[type=text]:focus{border-color:#a8ff78;background:rgba(0,0,0,0.5)}
 <label>Wali Kelas</label><input type="text" name="Wali_Kelas" value="<?= htmlspecialchars($data['Wali_Kelas']) ?>">
 <label>Foto Guru</label><div class="file-box"><input type="file" name="Foto" accept="image/*"></div>
 <?php if(!empty($data['Foto'])): ?>
-<div class="foto-lama">Foto saat ini: <?= htmlspecialchars($data['Foto']) ?><br><img src="../../foto/<?= htmlspecialchars($data['Foto']) ?>" onerror="this.src='../foto/<?= htmlspecialchars($data['Foto']) ?>'" alt=""></div>
+<div class="foto-lama">Foto saat ini: <?= htmlspecialchars($data['Foto']) ?><br><img src="uploads/<?= htmlspecialchars($data['Foto']) ?>" onerror="this.src='../foto/<?= htmlspecialchars($data['Foto']) ?>'" alt=""></div>
 <?php endif; ?>
 <button type="submit" name="update" class="btn">UPDATE DATA</button>
 </form>

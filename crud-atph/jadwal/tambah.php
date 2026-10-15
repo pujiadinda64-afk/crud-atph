@@ -1,4 +1,12 @@
 <?php
+session_start(); // Wajib ada untuk membaca data login
+
+// Cek apakah yang mengakses adalah admin ATAU siswa
+if (!isset($_SESSION['role']) || ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'siswa')) {
+    echo "<script>alert('Akses ditolak! Halaman khusus Admin'); window.location='index.php';</script>";
+    exit();
+}
+
 
 include '../../koneksi.php';
 

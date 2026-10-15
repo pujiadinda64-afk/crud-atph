@@ -14,6 +14,9 @@ $total_kegiatan = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM kegiatan
 $total_alat = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat"));
 $total_guru = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM guru"));
 $total_peminjaman = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM peminjaman"));
+$query_kelas = mysqli_query($koneksi, "SELECT COUNT(DISTINCT CONCAT(kelas, '-', rombel)) as total_kelas FROM jadwal_lapang");
+$data_kelas = mysqli_fetch_assoc($query_kelas);
+$total_kelas = $data_kelas['total_kelas'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -204,38 +207,44 @@ $total_peminjaman = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM peminj
             <p>Panel Kontrol Administrator Sistem Informasi Agribisnis Tanaman Pangan dan Hortikultura.</p>
         </div>
 
-        <!-- Kartu Statistik Ringkasan -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-                <div class="stat-info">
-                    <h3><?= $total_kegiatan; ?></h3>
-                    <p>Total Kegiatan</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-toolbox"></i></div>
-                <div class="stat-info">
-                    <h3><?= $total_alat; ?></h3>
-                    <p>Total Alat</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-handshake-angle"></i></div>
-                <div class="stat-info">
-                    <h3><?= $total_peminjaman; ?></h3>
-                    <p>Peminjaman</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <div class="stat-info">
-                    <h3><?= $total_guru; ?></h3>
-                    <p>Data Guru</p>
-                </div>
-            </div>
+      <!-- Kartu Statistik Ringkasan -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="stat-info">
+            <h3><?= $total_kegiatan; ?></h3>
+            <p>Total Kegiatan</p>
         </div>
-
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-toolbox"></i></div>
+        <div class="stat-info">
+            <h3><?= $total_alat; ?></h3>
+            <p>Total Alat</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-handshake-angle"></i></div>
+        <div class="stat-info">
+            <h3><?= $total_peminjaman; ?></h3>
+            <p>Peminjaman</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+        <div class="stat-info">
+            <h3><?= $total_guru; ?></h3>
+            <p>Data Guru</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="stat-info">
+            <h3><?= $total_kelas; ?></h3>
+            <p>Total Kelas</p>
+        </div>
+    </div>
+</div>
         <!-- Menu Pintasan Cepat -->
         <h2 class="section-title">Akses Cepat Pengelolaan</h2>
         <div class="menu-grid">
